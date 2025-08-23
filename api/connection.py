@@ -1,7 +1,7 @@
 import time
 
 import serial
-PORT = 'COM5'
+PORT = 'COM3'
 BAUD = 9600
 
 try :
