@@ -1,6 +1,6 @@
 import datetime
 import time
-from button_filter import ButtonFilter
+from .button_filter import ButtonFilter
 from .mavlink import mavlink, client
 from . import command_handler
 from robot_core import robot
@@ -20,6 +20,11 @@ async def command_ack_handler(msg: mavlink.MAVLink_command_ack_message):
     pass
 
 
+button_filter = ButtonFilter(
+    delay=0.5,
+    excluded_buttons={}
+)
+
 latest_data = None
 lock = threading.Lock()
 
@@ -31,12 +36,10 @@ def serial_writer():
         with lock:
             if latest_data is not None:
                 ser.write((latest_data + "\n").encode())
-                #print(latest_data)
-                # line = ser.readline()
+                print(latest_data)
+
+                line = ser.readline().decode('utf-8').strip()
                 # print(line)
-                if ser.in_waiting > 0 :
-                    line = ser.readline().decode('utf-8').strip()
-                print(line)
 
         time.sleep(0.11)
 
@@ -44,30 +47,17 @@ def serial_writer():
 writer_thread = threading.Thread(target=serial_writer, daemon=True)
 writer_thread.start()
 
-R1 = 0
-L1 = 0
-
 
 async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
     global latest_data
-    global R1
-    global L1
-    if abs(R1 - datetime.datetime.now().second) > 0.5 and msg.buttons == 2048:
-        R1 = datetime.datetime.now().second
 
-        command = Controller(msg)
-        data = command.in_action()
+    button_code = msg.buttons
 
-    elif abs(L1 - datetime.datetime.now().second) > 0.5 and msg.buttons == 4096:
-        L1 = datetime.datetime.now().second
+    if not button_filter.allow(button_code):
+        return  # Skip due to delay filter
 
-        command = Controller(msg)
-        data = command.in_action()
-    elif msg.buttons == 4096 or msg.buttons == 2048:
-        return
-    else:
-        command = Controller(msg)
-        data = command.in_action()
+    command = Controller(msg)
+    data = command.in_action()
 
     with lock:
         latest_data = data  # update shared variable for the thread
