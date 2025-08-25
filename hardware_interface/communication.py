@@ -177,7 +177,7 @@ def is_connected():
     return serial_connection is not None and serial_connection.is_open
 
 
-connect()
+# connect()
 
 
 # Example usage (for testing this module directly)
