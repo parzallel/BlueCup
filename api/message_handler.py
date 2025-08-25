@@ -29,24 +29,31 @@ latest_data = None
 lock = threading.Lock()
 
 
-def serial_writer():
+def serial_writer_getter():
     global latest_data
 
     while True:
         with lock:
             if latest_data is not None:
-                ser.write((latest_data + "\n").encode())
-                print(latest_data)
 
-                line = ser.readline().decode('utf-8').strip()
-                # print(line)
+                ser.write((latest_data + "\n").encode())
+                #print(latest_data)
+                mpu_data()
 
         time.sleep(0.11)
 
 
-writer_thread = threading.Thread(target=serial_writer, daemon=True)
+writer_thread = threading.Thread(target=serial_writer_getter, daemon=True)
 writer_thread.start()
 
+def mpu_data():
+    try:
+        line = ser.readline().decode('utf-8').strip().split(",")
+        # print(line)
+        mpu = {"roll": line[0], "pitch": line[1], "yaw": line[2]}
+        print(mpu)
+    except Exception as e:
+        print(f"ERROR :  receiving data from MPU as {e}")
 
 async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
     global latest_data
