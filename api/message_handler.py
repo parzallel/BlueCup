@@ -52,15 +52,15 @@ button_filter = ButtonFilter(
 # writer_thread.start()
 connection.start_serial_thread()
 
-async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
 
+async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
     button_code = msg.buttons
 
     if not button_filter.allow(button_code):
         return  # Skip due to delay filter
-
+    # TODO : if x or z or y or ... were not 0 the controller should take over or else the sensors
     command = Controller(msg)
-    latest_data  = command.in_action()
+    latest_data = command.in_action()
     with connection.lock:
         connection.latest_data = latest_data
 
