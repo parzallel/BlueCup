@@ -2,10 +2,10 @@ import datetime
 import time
 from .button_filter import ButtonFilter
 from .mavlink import mavlink, client
-from . import command_handler
+from . import command_handler, connection
 from robot_core import robot
 from .controller import Controller
-from .connection import ser
+
 import threading
 
 K_MODE_MANUAL = 0b0000000000000010
@@ -24,34 +24,35 @@ button_filter = ButtonFilter(
     delay=0.5,
     excluded_buttons={}
 )
-lock = threading.Lock()
-latest_data = None
+# lock = threading.Lock()
+# latest_data = None
+#
+#
+# def mpu_data():
+#     try:
+#         line = ser.readline().decode('utf-8').strip().split(",")
+#
+#         mpu = {"roll": line[0], "pitch": line[1], "yaw": line[2]}
+#         print(mpu)
+#     except Exception as e:
+#         print(f"ERROR :  receiving data from MPU as {e}")
+#
+# def serial_cycle():
+#     while True:
+#         with lock:
+#             if latest_data is not None:
+#
+#                 ser.write((latest_data + "\n").encode())
+#                 print(latest_data)
+#                 mpu_data()
+#
+#         time.sleep(0.11)
 
+# writer_thread = threading.Thread(target=serial_cycle, daemon=True)
+# writer_thread.start()
+connection.start_serial_thread()
 
-def mpu_data():
-    try:
-        line = ser.readline().decode('utf-8').strip().split(",")
-
-        mpu = {"roll": line[0], "pitch": line[1], "yaw": line[2]}
-        print(mpu)
-    except Exception as e:
-        print(f"ERROR :  receiving data from MPU as {e}")
-
-def serial_cycle():
-    while True:
-        with lock:
-            if latest_data is not None:
-
-                ser.write((latest_data + "\n").encode())
-                print(latest_data)
-                mpu_data()
-
-        time.sleep(0.11)
-
-writer_thread = threading.Thread(target=serial_cycle, daemon=True)
-writer_thread.start()
 async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
-    global latest_data
 
     button_code = msg.buttons
 
@@ -60,9 +61,8 @@ async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
 
     command = Controller(msg)
     latest_data  = command.in_action()
-    with lock:
-        latest_data = latest_data
-      # update shared variable for the thread
+    with connection.lock:
+        connection.latest_data = latest_data
 
 
 async def heartbeat_handler(msg: mavlink.MAVLink_heartbeat_message):

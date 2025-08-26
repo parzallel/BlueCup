@@ -20,7 +20,9 @@ class MPU:
 
         while  self.pitch >= 10 :
             self.pitch //= 10
-        truster_power = self.pitch*50
+        truster_power = self.pitch*40
+
+        return
 
 
     def pitch_neg(self):
