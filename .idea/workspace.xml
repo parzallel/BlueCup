@@ -4,15 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="28cec0e0-8c87-408c-ba9c-b1ccfb3a2908" name="Changes" comment="connection.py updated and cleaned the message_handler.py">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/connection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/message_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/message_handler.py" afterDir="false" />
-    </list>
+    <list default="true" id="28cec0e0-8c87-408c-ba9c-b1ccfb3a2908" name="Changes" comment="connection and message_handler.py seperated" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" show_ignored="true">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="repository" />
+    </option>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -22,6 +24,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Alireza &lt;idraidpny@gmail.com&gt;" />
+      </list>
+    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="master" />
@@ -39,7 +46,18 @@
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/parzallel/BlueCup.git&quot;,
     &quot;accountId&quot;: &quot;30a93045-a4dd-4904-aeba-1fdea627a56f&quot;
-  }
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;parzallel&quot;,
+    &quot;repository&quot;: &quot;BlueCup&quot;
+  },
+  &quot;editorReviewEnabled&quot;: false
 }</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
@@ -170,7 +188,9 @@
       <workItem from="1755979661753" duration="35000" />
       <workItem from="1756045682355" duration="189000" />
       <workItem from="1756054290685" duration="1753000" />
-      <workItem from="1756113349496" duration="5876000" />
+      <workItem from="1756113349496" duration="8278000" />
+      <workItem from="1756193883202" duration="1092000" />
+      <workItem from="1756195002329" duration="319000" />
     </task>
     <task id="LOCAL-00001" summary="Pc commit">
       <option name="closed" value="true" />
@@ -212,7 +232,47 @@
       <option name="project" value="LOCAL" />
       <updated>1756114794888</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="connection.py updated and cleaned the message_handler.py">
+      <option name="closed" value="true" />
+      <created>1756190687214</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1756190687214</updated>
+    </task>
+    <task id="LOCAL-00007" summary="connection and message_handler.py">
+      <option name="closed" value="true" />
+      <created>1756194894838</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1756194894838</updated>
+    </task>
+    <task id="LOCAL-00008" summary="connection and message_handler.py">
+      <option name="closed" value="true" />
+      <created>1756194963665</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1756194963665</updated>
+    </task>
+    <task id="LOCAL-00009" summary="connection and message_handler.py">
+      <option name="closed" value="true" />
+      <created>1756195032844</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1756195032844</updated>
+    </task>
+    <task id="LOCAL-00010" summary="connection and message_handler.py seperated">
+      <option name="closed" value="true" />
+      <created>1756195282568</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1756195282568</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -236,7 +296,9 @@
     <MESSAGE value="button filter workflow implemnted for delayed control" />
     <MESSAGE value="mpu and sensors created" />
     <MESSAGE value="connection.py updated and cleaned the message_handler.py" />
-    <option name="LAST_COMMIT_MESSAGE" value="connection.py updated and cleaned the message_handler.py" />
+    <MESSAGE value="connection and message_handler.py" />
+    <MESSAGE value="connection and message_handler.py seperated" />
+    <option name="LAST_COMMIT_MESSAGE" value="connection and message_handler.py seperated" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BlueCup$main.coverage" NAME="main Coverage Results" MODIFIED="1755934583861" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -246,7 +308,7 @@
     <SUITE FILE_PATH="coverage/BlueCup$bluecup.coverage" NAME="bluecup Coverage Results" MODIFIED="1755934248554" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/BlueCup$message_handler.coverage" NAME="message_handler Coverage Results" MODIFIED="1755934561325" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$connection.coverage" NAME="connection Coverage Results" MODIFIED="1756114554299" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
-    <SUITE FILE_PATH="coverage/BlueCup$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1756190582378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\idrai\PycharmProjects\BlueCup" />
+    <SUITE FILE_PATH="coverage/BlueCup$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1756194440256" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\idrai\PycharmProjects\BlueCup" />
     <SUITE FILE_PATH="coverage/BlueCup$robot.coverage" NAME="robot Coverage Results" MODIFIED="1755934095210" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/BlueCup$sensors.coverage" NAME="sensors Coverage Results" MODIFIED="1756045819677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hardware_interface" />
   </component>

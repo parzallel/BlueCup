@@ -17,16 +17,24 @@ class MPU:
     # (-------PITCH------)
 
     def pitch_pos(self):
-
-        while  self.pitch >= 10 :
-            self.pitch //= 10
-        truster_power = self.pitch*50
+        pitch = abs(self.pitch)
+        while  pitch >= 10 :
+            pitch //= 10
+        truster_power = pitch*40
+        #m2 up / m5 down
+        return f"m2={truster_power} m5={-1 * truster_power}"
 
 
     def pitch_neg(self):
-        pass
+        pitch = abs(self.pitch)
+        while  pitch >= 10 :
+            pitch //= 10
+        truster_power = pitch*40
+        #m2 down / m5 up
+        return f"m2={truster_power} m5={-1 * truster_power}"
 
     # (-------YAW---------)
+
 
 # TODO : write a main def and call the above functions
 
