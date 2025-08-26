@@ -21,7 +21,7 @@ class MPU:
         while  pitch >= 10 :
             pitch //= 10
         truster_power = pitch*40
-
+        #m2 up / m5 down
         return f"m2={truster_power} m5={-1 * truster_power}"
 
 
@@ -30,9 +30,11 @@ class MPU:
         while  pitch >= 10 :
             pitch //= 10
         truster_power = pitch*40
+        #m2 down / m5 up
         return f"m2={truster_power} m5={-1 * truster_power}"
 
     # (-------YAW---------)
+
 
 # TODO : write a main def and call the above functions
 
