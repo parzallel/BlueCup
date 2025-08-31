@@ -1,5 +1,5 @@
 import threading
-import sensors
+from . import sensors
 import serial
 import time
 
@@ -21,11 +21,12 @@ latest_data = None
 def sensor_reader():
     """handles the reading from arduino"""
     try:
-        # TODO : merge  all the sensors codes in arduino
+        # DONE : merge  all the sensors codes in arduino
+        # TODO : merge all the rp code in rp
         data_from_sensors = ser.readline().decode('utf-8').strip().split(",")
-        data_cleaned = sensors.SensorFormatter(data_from_sensors)
+        data_cleaned = sensors.SensorFormatter(ardu_data=data_from_sensors , ras_data=None)
         sensors.MPU(data_cleaned.mpu_formatter())
-
+        return None # TODO : should return in the same format as controller
     except Exception as e:
 
         print(f"ERROR: receiving data from MPU as {e}")
@@ -36,10 +37,10 @@ def serial_cycle():
     global latest_data
     while True:
         with lock:
+            print(f"Sent: {latest_data}")
             if latest_data is not None:
+                # sensor_reader()
                 ser.write((latest_data + "\n").encode())
-                print(f"Sent: {latest_data}")
-                sensor_reader()
 
         time.sleep(0.11)
 

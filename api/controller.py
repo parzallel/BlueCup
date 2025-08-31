@@ -1,7 +1,7 @@
 import datetime
 import threading
 import time
-
+# TODO : change the gear base and complete the manual controller
 BASE_GEAR = 3
 
 

@@ -1,8 +1,10 @@
 class SensorFormatter:
-    """reformats the data that has been read from arduino for each relative sensor"""
+    """reformats the data that has been read from arduino and rp for each relative sensor"""
 
-    def __init__(self, data):
-        self.data = data
+    # TODO : give the ardu_data in dictionary format
+
+    def __init__(self, ras_data, ardu_data):
+        self.data = ras_data + ardu_data
 
     def mpu_formatter(self):
         return {"roll": self.data[0],
@@ -53,4 +55,3 @@ class MPU:
         return f"m2={truster_power} m5={-1 * truster_power}"
 
     # (-------YAW---------)
-
