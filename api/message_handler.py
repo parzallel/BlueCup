@@ -63,7 +63,7 @@ async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
         truster_command = command.in_action()
         # TODO : has to save the latest data from sensors to stable the robot
     else :
-        truster_command = connection.sensor_handler() # TODO : update this after implementing the stabilize file
+        truster_command = connection.sensor_handler()
 
     with connection.lock:
         connection.latest_data = truster_command
