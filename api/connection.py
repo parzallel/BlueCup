@@ -1,5 +1,8 @@
 import threading
-from . import sensors
+
+from pefile import retrieve_flags
+
+from . import sensors, stabilize
 import serial
 import time
 
@@ -17,30 +20,36 @@ except Exception as e:
 lock = threading.Lock()
 latest_data = None
 
-
-def sensor_reader():
+ras_data_sample = [23]
+def sensor_reader(data):
     """handles the reading from arduino"""
     try:
-        # DONE : merge  all the sensors codes in arduino
         # TODO : merge all the rp code in rp
-        data_from_sensors = ser.readline().decode('utf-8').strip().split(",")
-        data_cleaned = sensors.SensorFormatter(ardu_data=data_from_sensors , ras_data=None)
-        sensors.MPU(data_cleaned.mpu_formatter())
-        return None # TODO : should return in the same format as controller
+        # data_from_sensors = ser.readline().decode('utf-8').strip().split(",")  # returned data from sensors
+        # formatted_data = sensors.SensorFormatter(ras_data_sample    , data_from_sensors) # formatted data from sensors
+        # # mpu = sensors.MPU(formatted_data)
+        # # return stabilize.Stabilize(mpu).make_stable()
+        # TODO : should return in the same format as controller
+        print(data)
+
     except Exception as e:
 
         print(f"ERROR: receiving data from MPU as {e}")
 
-
+def sensor_handler():
+    return "m2=for FUCKS sake"
 def serial_cycle():
     """handles the writing on arduino"""
     global latest_data
     while True:
         with lock:
             print(f"Sent: {latest_data}")
+
+            data_from_sensors = ser.readline().decode('utf-8').strip().split(",")
+            sensor_reader(data_from_sensors )
+            print(data_from_sensors )
             if latest_data is not None:
-                # sensor_reader()
-                ser.write((latest_data + "\n").encode())
+                ser.write((latest_data +  "\n").encode())
 
         time.sleep(0.11)
 

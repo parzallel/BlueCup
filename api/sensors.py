@@ -4,7 +4,7 @@ class SensorFormatter:
     # TODO : give the ardu_data in dictionary format
 
     def __init__(self, ras_data, ardu_data):
-        self.data = ras_data + ardu_data
+        self.data = ardu_data  + ras_data
 
     def mpu_formatter(self):
         return {"roll": self.data[0],
@@ -44,7 +44,7 @@ class MPU:
             pitch //= 10
         truster_power = pitch * 40
         # m2 up / m5 down
-        return f"m2={truster_power} m5={-1 * truster_power}"
+        return f"m2={truster_power + 1500 } m5={(-1 * truster_power) + 1500}"
 
     def pitch_neg(self):
         pitch = abs(self.pitch)
@@ -52,6 +52,6 @@ class MPU:
             pitch //= 10
         truster_power = pitch * 40
         # m2 down / m5 up
-        return f"m2={truster_power} m5={-1 * truster_power}"
+        return f"m2={truster_power + 1500} m5={(-1 * truster_power) + 1500 }"
 
     # (-------YAW---------)
