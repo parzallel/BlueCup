@@ -6,6 +6,8 @@ from .mavlink import mavlink, client
 from . import command_handler, connection
 from robot_core import robot
 from .controller import Controller
+from . import sensors, stabilize
+
 
 import threading
 
@@ -52,19 +54,21 @@ button_filter = ButtonFilter(
 # writer_thread = threading.Thread(target=serial_cycle, daemon=True)
 # writer_thread.start()
 connection.start_serial_thread()
+saved_yaw_int = None
 async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
 
     # button_code = msg.buttons
     # if not button_filter.allow(button_code):
     #     return  # Skip due to delay filter
-
+    global saved_yaw_int
     command = Controller(msg)
     if msg.x != 0 or msg.y != 0 or msg.x != 0 or msg.x != 0 or msg.buttons != 0:
         truster_command = command.in_action()
+        saved_yaw_int = connection.save_yaw()
         # TODO : has to save the latest data from sensors to stable the robot
     else :
-        truster_command = connection.sensor_handler()
-
+        truster_command = connection.sensor_handler(saved_yaw_int)
+        print(saved_yaw_int)
     with connection.lock:
         connection.latest_data = truster_command
 
