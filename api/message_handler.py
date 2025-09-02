@@ -1,6 +1,7 @@
 import datetime
 import time
 from .button_filter import ButtonFilter
+from .connection import latest_data
 from .mavlink import mavlink, client
 from . import command_handler, connection
 from robot_core import robot
@@ -51,18 +52,21 @@ button_filter = ButtonFilter(
 # writer_thread = threading.Thread(target=serial_cycle, daemon=True)
 # writer_thread.start()
 connection.start_serial_thread()
-
-
 async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
-    button_code = msg.buttons
 
-    if not button_filter.allow(button_code):
-        return  # Skip due to delay filter
-    # TODO : if x or z or y or ... were not 0 the controller should take over or else the sensors
+    # button_code = msg.buttons
+    # if not button_filter.allow(button_code):
+    #     return  # Skip due to delay filter
+
     command = Controller(msg)
-    latest_data = command.in_action()
+    if msg.x != 0 or msg.y != 0 or msg.x != 0 or msg.x != 0 or msg.buttons != 0:
+        truster_command = command.in_action()
+        # TODO : has to save the latest data from sensors to stable the robot
+    else :
+        truster_command = connection.sensor_handler()
+
     with connection.lock:
-        connection.latest_data = latest_data
+        connection.latest_data = truster_command
 
 
 async def heartbeat_handler(msg: mavlink.MAVLink_heartbeat_message):
