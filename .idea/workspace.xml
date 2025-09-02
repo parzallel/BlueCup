@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="28cec0e0-8c87-408c-ba9c-b1ccfb3a2908" name="Changes" comment="serial_cycle &#10;sensor_handler&#10;sensor reader&#10;sensor reader only for handling the senors so no reading in it &#10;it has to be two different function becuase in message_handler.py&#10;we need to differntiate them">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="28cec0e0-8c87-408c-ba9c-b1ccfb3a2908" name="Changes" comment="pitch stabilize.py fixed &#10;read problem fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/connection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/message_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/message_handler.py" afterDir="false" />
@@ -74,32 +73,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.bluecup.executor&quot;: &quot;Run&quot;,
-    &quot;Python.communication.executor&quot;: &quot;Run&quot;,
-    &quot;Python.connection.executor&quot;: &quot;Run&quot;,
-    &quot;Python.controlle-1r.executor&quot;: &quot;Run&quot;,
-    &quot;Python.controller.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (2).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.message_handler.executor&quot;: &quot;Run&quot;,
-    &quot;Python.robot.executor&quot;: &quot;Run&quot;,
-    &quot;Python.sensors.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;deletionFromPopupRequiresConfirmation&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;mpu-implementation&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.bluecup.executor": "Run",
+    "Python.communication.executor": "Run",
+    "Python.connection.executor": "Run",
+    "Python.controlle-1r.executor": "Run",
+    "Python.controller.executor": "Run",
+    "Python.main (2).executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.message_handler.executor": "Run",
+    "Python.robot.executor": "Run",
+    "Python.sensors.executor": "Run",
+    "Python.stabilize.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "deletionFromPopupRequiresConfirmation": "false",
+    "git-widget-placeholder": "#4 on mpu-implementation",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="PyCoverageOptionsProvider">
     <option name="myUseBundledCoveragePy" value="true" />
   </component>
@@ -176,7 +176,8 @@
       <workItem from="1756113349496" duration="8278000" />
       <workItem from="1756193883202" duration="1092000" />
       <workItem from="1756195002329" duration="5202000" />
-      <workItem from="1756735611682" duration="3849000" />
+      <workItem from="1756735611682" duration="4573000" />
+      <workItem from="1756826195460" duration="16821000" />
     </task>
     <task id="LOCAL-00001" summary="Pc commit">
       <option name="closed" value="true" />
@@ -282,7 +283,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756714937444</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="pitch stabilize.py fixed &#10;read problem fixed">
+      <option name="closed" value="true" />
+      <created>1756739523004</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1756739523004</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -309,14 +318,16 @@
     <MESSAGE value="connection and message_handler.py" />
     <MESSAGE value="connection and message_handler.py seperated" />
     <MESSAGE value="serial_cycle &#10;sensor_handler&#10;sensor reader&#10;sensor reader only for handling the senors so no reading in it &#10;it has to be two different function becuase in message_handler.py&#10;we need to differntiate them" />
-    <option name="LAST_COMMIT_MESSAGE" value="serial_cycle &#10;sensor_handler&#10;sensor reader&#10;sensor reader only for handling the senors so no reading in it &#10;it has to be two different function becuase in message_handler.py&#10;we need to differntiate them" />
+    <MESSAGE value="pitch stabilize.py fixed &#10;read problem fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="pitch stabilize.py fixed &#10;read problem fixed" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/BlueCup$main.coverage" NAME="main Coverage Results" MODIFIED="1756739218532" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BlueCup$main.coverage" NAME="main Coverage Results" MODIFIED="1756848822022" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/BlueCup$controlle_1r.coverage" NAME="controlle-1r Coverage Results" MODIFIED="1755790660803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$controller.coverage" NAME="controller Coverage Results" MODIFIED="1755503109889" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$communication.coverage" NAME="communication Coverage Results" MODIFIED="1755790730803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hardware_interface" />
     <SUITE FILE_PATH="coverage/BlueCup$bluecup.coverage" NAME="bluecup Coverage Results" MODIFIED="1755934248554" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/BlueCup$stabilize.coverage" NAME="stabilize Coverage Results" MODIFIED="1756846402941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$message_handler.coverage" NAME="message_handler Coverage Results" MODIFIED="1756710033142" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$connection.coverage" NAME="connection Coverage Results" MODIFIED="1756710563625" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1756195388592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\idrai\PycharmProjects\BlueCup" />
