@@ -175,9 +175,6 @@ async def send_ahrs2():
 async def send_attitude():
     await client.mav.attitude_send(
         time_boot_ms=client.boot_time_ms(),
-        # roll=robot.roll,  # Random roll angle in radians
-        # pitch=robot.pitch,  # Random pitch angle in radians
-        # yaw=robot.yaw,  # Random yaw angle in radians
         roll=(12/180)*3.1415926,  # Random roll angle in radians
         pitch=(12/180)*3.1415926,  # Random pitch angle in radians
         yaw=(12/180)*3.1415926,
