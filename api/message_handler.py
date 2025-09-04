@@ -1,15 +1,7 @@
-import datetime
-import time
 from .button_filter import ButtonFilter
-from .connection import latest_data
 from .mavlink import mavlink, client
 from . import command_handler, connection
-from robot_core import robot
 from .controller import Controller
-from . import sensors, stabilize
-
-
-import threading
 
 K_MODE_MANUAL = 0b0000000000000010
 
@@ -23,55 +15,39 @@ async def command_ack_handler(msg: mavlink.MAVLink_command_ack_message):
     pass
 
 
-button_filter = ButtonFilter(
-    delay=0.5,
-    excluded_buttons={}
-)
-# lock = threading.Lock()
-# latest_data = None
-#
-#
-# def mpu_data():
-#     try:
-#         line = ser.readline().decode('utf-8').strip().split(",")
-#
-#         mpu = {"roll": line[0], "pitch": line[1], "yaw": line[2]}
-#         print(mpu)
-#     except Exception as e:
-#         print(f"ERROR :  receiving data from MPU as {e}")
-#
-# def serial_cycle():
-#     while True:
-#         with lock:
-#             if latest_data is not None:
-#
-#                 ser.write((latest_data + "\n").encode())
-#                 print(latest_data)
-#                 mpu_data()
-#
-#         time.sleep(0.11)
-
-# writer_thread = threading.Thread(target=serial_cycle, daemon=True)
-# writer_thread.start()
+button_filter = ButtonFilter(delay=0.5)
 connection.start_serial_thread()
 saved_yaw_int = None
-async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
 
-    # button_code = msg.buttons
-    # if not button_filter.allow(button_code):
-    #     return  # Skip due to delay filter
+
+
+
+async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
+    """Handle manual control messages from MAVLink."""
 
     global saved_yaw_int
+
+    button_code = msg.buttons
+
+    # Apply button delay filter
+    if not button_filter.allow(button_code) and button_code != 0:
+        return
+
     command = Controller(msg)
-    if msg.x != 0 or msg.y != 0 or msg.z != 0 or msg.x != 0 or msg.buttons != 0:
-        truster_command = command.in_action()
+    has_input = any([msg.x, msg.y, msg.z, msg.x, button_code])
+
+    if has_input:
+        thruster_command = command.in_action()
         saved_yaw_int = connection.save_yaw()
-        # TODO : has to save the latest data from sensors to stable the robot
-    else :
-        print(saved_yaw_int)
-        truster_command = connection.sensor_handler(saved_yaw_int)
+        print(thruster_command)
+    else:
+        thruster_command = connection.sensor_handler(saved_yaw_int)
+
+    # Update shared data safely
     with connection.lock:
-        connection.latest_data = truster_command
+        connection.latest_data = thruster_command
+
+
 
 
 async def heartbeat_handler(msg: mavlink.MAVLink_heartbeat_message):
