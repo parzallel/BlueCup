@@ -1,10 +1,10 @@
 import threading
-from pefile import retrieve_flags
+# from pefile import retrieve_flags
 from . import sensors, stabilize
 import serial
 import time
 
-PORT = 'COM3'
+PORT = 'COM5'
 BAUD = 9600
 
 try:
@@ -27,11 +27,12 @@ def serial_cycle():
     global data_from_sensors
     while True:
         with lock:
-            # print(f"Sent: {latest_data}")
             data_from_sensors = ser.readline().decode('utf-8').strip().split(",")
             # print(type(data_from_sensors))
             if latest_data is not None:
                 ser.write((latest_data + "\n").encode())
+                # print(f"Sent: {latest_data}")
+
         time.sleep(0.11)
 
 

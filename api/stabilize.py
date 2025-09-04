@@ -6,7 +6,7 @@ class Stabilize:
     def __init__(self, mpu, saved_yaw):
         self.mpu = mpu
         self.saved_yaw = saved_yaw
-        self.pitch_error = 10
+        self.pitch_error = 6
         self.yaw_error = 8
 
     def make_stable(self):
