@@ -3,8 +3,8 @@ import asyncio
 import log
 
 
-with open("api/gear.txt" , "w") as file:
-    file.write("3")
+
+BASE_GEAR = 0
 
 
 logger = log.getLogger(__name__)

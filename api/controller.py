@@ -1,47 +1,54 @@
-import datetime
-import threading
-import time
-# TODO : change the gear base and complete the manual controller
-BASE_GEAR = 3
+from codecs import xmlcharrefreplace_errors
+
+from main import BASE_GEAR
+
+CURRENT_GEAR = BASE_GEAR
 
 
-def save_gear(current_gear):
-    with open("api/gear.txt", "w") as file:
-        file.write(str(current_gear) + "\n")
-
-
-def load_gear():
-    with open("api/gear.txt", "r") as file:
-        gear = file.readline()
-        return int(gear)
-
-
-def inc_gear(current_gear):
-    if current_gear != 6:
-        current_gear += 1
-        save_gear(current_gear)
-        print(f"Gear : {current_gear - 3}")
+def inc_gear():
+    global CURRENT_GEAR
+    if CURRENT_GEAR < 3:
+        CURRENT_GEAR += 1
+        print(f"Gear : [{CURRENT_GEAR}]")
     else:
-        print("Warning : NO MORE GEAR")
+        print("NO MORE GEAR")
 
 
-def dec_gear(current_gear):
-    if current_gear != 0:
-        current_gear -= 1
-        save_gear(current_gear)
-        print(f"Gear : {current_gear - 3}")
+buttons = {
+    "R1": 2048,
+    "L1": 4096,
+    "triangle": 10
+}
+
+
+def dec_gear():
+    global CURRENT_GEAR
+    if CURRENT_GEAR > 0:
+        CURRENT_GEAR -= 1
+        print(f"Gear : [{CURRENT_GEAR}]")
     else:
-        print("Warning : NO MORE GEAR")
+        print("NO MORE GEAR")
 
 
-def motor_speed_format(m1, m2, m3, m4, m5, m6):  # reformats the motor speed in order to pass to arduino
-    return f"m1={(-1 * m1) + 1500} m2={m2 + 1500} m3={(-1 * m3) + 1500} m4={(-1 * m4) + 1500} m5={(-1 * m5) + 1500} m6={(-1 * m6) + 1500}"
+def thruster_speed_formatter(m1, m2, m3, m4, m5, m6):  # reformats the motor speed in order to pass to arduino
+    return (f"m1={-m1 + 1500} "
+            f"m2={m2 + 1500} "
+            f"m3={-m3 + 1500} "
+            f"m4={-m4 + 1500} "
+            f"m5={-m5 + 1500} "
+            f"m6={-m6 + 1500}"
+            )
 
 
 class Controller:
-    gears = [-300, -200, -100, 0, 100, 200, 300]
+    """
+    Controller class that processes cockpit and controller inputs
+    to calculate appropriate motor speeds for the vehicle.
+    """
+    GEARS = [0, 100, 200, 300]  # available gears
 
-    def __init__(self, msg):
+    def __init__(self, msg, base_gear=0, depth_offset=0, horizontal_offset=100):
+
         self.x = msg.x
         self.y = msg.y
         self.z = msg.z
@@ -50,74 +57,114 @@ class Controller:
         self.s = msg.s
         self.buttons = msg.buttons
 
-    def acc(self, current_gear):
+        # configurable attributes
+        self.BASE_GEAR = base_gear
+        self.depth_offset = depth_offset
+        self.horizontal_offset = horizontal_offset
+        self.NASTY_OFFSET_FOR_M2 = 100
+
+        # computed powers (will be updated when needed)
+        self.thrust_power = 0
+        self.vertical_thrust = self.z + self.depth_offset
+        self.horizontal_thrust = self.r + self.horizontal_offset
+
+    def acc(self):
+        """Calculate thrust power based on current gear and x-axis input."""
         try:
-            engaged_gear = Controller.gears[current_gear]
+            engaged_gear = Controller.GEARS[CURRENT_GEAR]
         except IndexError:
-            print("there is sth wrong with the gears")
+            print("Error: invalid gear index.")
+            return 0
         else:
-            return engaged_gear + self.x // 10
+            if self.x > 0:
+                self.thrust_power = engaged_gear + self.x
+            elif self.x < 0:
+                self.thrust_power = -engaged_gear + self.x
+            else:
+                self.thrust_power = self.x
+            return self.thrust_power
 
     def in_action(self):
-        """automated method to returns the suitable motor speed for the vehicle to perform properly.
-        this is based on the data from the Cockpit adn the controller itself"""
-
-        current_gear = load_gear()
-
-        if self.buttons == 2048:
-            inc_gear(current_gear)
-
-        elif self.buttons == 4096:
-            dec_gear(current_gear)
-        elif self.buttons == 10:
-            self.mode_stabilize(current_gear)
+        """
+        Automated method that returns suitable motor speeds
+        based on cockpit/controller state.
+        """
+        if self.buttons == buttons["R1"]:
+            inc_gear()
+        elif self.buttons == buttons["L1"]:
+            dec_gear()
+        elif self.buttons == buttons["triangle"]:
+            self.thrusters_off()
         elif self.y != 0:
-            return self.pivot(current_gear)
-
-        elif self.x != 0 or current_gear !=3:  # you have to change this code later . remove the m2 assignment for the function
-            return self.move(current_gear, m2=100)
+            return self.pivot()
+        elif self.r != 0:
+            return self.horizontal_move()
         else:
-            return self.move(current_gear, m2=0)
+
+            return self.move()
+
+        return ""
+
+    def horizontal_move(self):
+        x_power = self.acc()
+        r_power = self.horizontal_thrust
+        z_power = self.vertical_thrust
+        if self.r > 0:
+            return thruster_speed_formatter(m1=r_power, m2=z_power,
+                                            m3=x_power, m4=x_power,
+                                            m5=z_power, m6=r_power)
+        elif self.r < 0:
+            return thruster_speed_formatter(m1=x_power, m2=z_power,
+                                            m3=r_power, m4=r_power,
+                                            m5=z_power, m6=x_power)
+        return ""
+
+    def pivot(self):
+        """Handle pivoting movement based on y-axis input."""
+        pivot_power = self.y * 2
+        x_power = self.acc()
+        z_power = self.vertical_thrust
+        m4 = x_power
+        m6 = x_power
+
+        if -300 < x_power < 300:
+            if self.y > 0:
+                return thruster_speed_formatter(m1=x_power, m2=z_power,
+                                                m3=x_power + pivot_power, m4=m4,
+                                                m5=z_power, m6=m6)
+            elif self.y < 0:
+                return thruster_speed_formatter(m1=x_power - pivot_power, m2=z_power,
+                                                m3=x_power, m4=m4,
+                                                m5=z_power, m6=m6)
+        else:
+            if self.y > 0:
+                return thruster_speed_formatter(m1=x_power - pivot_power, m2=z_power,
+                                                m3=x_power, m4=m4,
+                                                m5=z_power, m6=m6)
+            elif self.y < 0:
+                return thruster_speed_formatter(m1=x_power, m2=z_power,
+                                                m3=x_power + pivot_power, m4=m4,
+                                                m5=z_power, m6=m6)
 
         return None
 
-    def pivot(self, current_gear):
-        y = self.y // 10
-        x = self.acc(current_gear)
-        if current_gear != 6:
-            if y > 0:
-                return motor_speed_format(m1=x, m2=int(self.z // 2.5 + 100),
-                                          m3=x + y * 2,
-                                          m4=x, m5=int(self.z // 2.5),
-                                          m6=x)
-            elif y < 0:
-                return motor_speed_format(m1=x - y * 2, m2=int(self.z // 2.5 + 100),
-                                          m3=x,
-                                          m4=x, m5=int(self.z // 2.5),
-                                          m6=x)
-        elif current_gear == 6:
-            if y > 0:
-                return motor_speed_format(m1=x + (y + 100), m2=int(self.z // 2.5 + 100),
-                                          m3=x,
-                                          m4=x, m5=int(self.z // 2.5),
-                                          m6=x)
-            elif y < 0:
-                return motor_speed_format(m1=x, m2=int(self.z // 2.5 + 100),
-                                          m3=x + (y + 100),
-                                          m4=x, m5=int(self.z // 2.5),
-                                          m6=x)
+    def thrusters_off(self):
+        """Turn off thrusters and reset gear to base gear."""
+        x_power = self.acc()
+        self.vertical_thrust = self.z
+        z_power = self.vertical_thrust
 
-        return None
+        global CURRENT_GEAR
+        CURRENT_GEAR = self.BASE_GEAR
 
-    def mode_stabilize(self, current_gear):
-        x = self.acc(current_gear)
-        save_gear(BASE_GEAR)
-        print("WARNING : motors are off")
-        return motor_speed_format(m1=x, m2=int(self.z // 2.5), m3=x,
-                                  m4=x, m5=int(self.z // 2.5), m6=x)
+        print("WARNING: motors are off")
+        return thruster_speed_formatter(m1=x_power, m2=z_power, m3=x_power,
+                                        m4=x_power, m5=z_power, m6=x_power)
 
-    def move(self, current_gear, m2):
-        # m2 = int(self.z // 2.5 + 100)
-        x = self.acc(current_gear)
-        return motor_speed_format(m1=x, m2=int(self.z // 2.5 + m2), m3=x,
-                                  m4=x, m5=int(self.z // 2.5 ), m6=x)
+    def move(self):
+        """Handle forward/backward movement."""
+        x_power = self.acc()
+        self.vertical_thrust = self.z + self.depth_offset
+        z_power = self.vertical_thrust
+        return thruster_speed_formatter(m1=x_power, m2=z_power + self.NASTY_OFFSET_FOR_M2, m3=x_power,
+                                        m4=x_power, m5=z_power, m6=x_power)
