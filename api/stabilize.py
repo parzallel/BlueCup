@@ -16,13 +16,13 @@ class Stabilize:
 
         if self.mpu.pitch > self.pitch_error:
 
-            print("WARNING : Tilting the Penguin ")
+            print("WARNING : Tilting the Penguin down  ")
             truster_power = self.mpu.get_pitch_power()
             return f"m2={1500 - truster_power} m5={(-1 * truster_power) + 1500}"
 
         elif self.mpu.pitch < -self.pitch_error:
 
-            print("WARNING : Tilting the Penguin ")
+            print("WARNING : Tilting the Penguin up ")
             truster_power = self.mpu.get_pitch_power()
             return f"m2={truster_power + 1500} m5={truster_power + 1500}"
 
