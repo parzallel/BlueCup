@@ -4,16 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="28cec0e0-8c87-408c-ba9c-b1ccfb3a2908" name="Changes" comment="new era opened">
-      <change afterPath="$PROJECT_DIR$/api/gui.py" afterDir="false" />
+    <list default="true" id="28cec0e0-8c87-408c-ba9c-b1ccfb3a2908" name="Changes" comment="lot of shit changed &#10;button delay fixed&#10;controller cleaned &#10;i dont remember the others">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/button_filter.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/button_filter.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/connection.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/gear.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/message_builder.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/message_builder.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/message_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/message_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/stabilize.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/stabilize.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +188,9 @@
       <workItem from="1756977173006" duration="490000" />
       <workItem from="1756978664603" duration="2438000" />
       <workItem from="1756993752112" duration="7165000" />
-      <workItem from="1757012716342" duration="3705000" />
+      <workItem from="1757012716342" duration="3783000" />
+      <workItem from="1757057061446" duration="11323000" />
+      <workItem from="1757079896207" duration="7015000" />
     </task>
     <task id="LOCAL-00001" summary="Pc commit">
       <option name="closed" value="true" />
@@ -314,7 +312,15 @@
       <option name="project" value="LOCAL" />
       <updated>1756891996122</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="lot of shit changed &#10;button delay fixed&#10;controller cleaned &#10;i dont remember the others">
+      <option name="closed" value="true" />
+      <created>1757016540961</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1757016540961</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -343,7 +349,8 @@
     <MESSAGE value="serial_cycle &#10;sensor_handler&#10;sensor reader&#10;sensor reader only for handling the senors so no reading in it &#10;it has to be two different function becuase in message_handler.py&#10;we need to differntiate them" />
     <MESSAGE value="pitch stabilize.py fixed &#10;read problem fixed" />
     <MESSAGE value="new era opened" />
-    <option name="LAST_COMMIT_MESSAGE" value="new era opened" />
+    <MESSAGE value="lot of shit changed &#10;button delay fixed&#10;controller cleaned &#10;i dont remember the others" />
+    <option name="LAST_COMMIT_MESSAGE" value="lot of shit changed &#10;button delay fixed&#10;controller cleaned &#10;i dont remember the others" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -359,7 +366,7 @@
     <SUITE FILE_PATH="coverage/BlueCup$communication.coverage" NAME="communication Coverage Results" MODIFIED="1755790730803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hardware_interface" />
     <SUITE FILE_PATH="coverage/BlueCup$controller.coverage" NAME="controller Coverage Results" MODIFIED="1755503109889" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1756195388592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\idrai\PycharmProjects\BlueCup" />
-    <SUITE FILE_PATH="coverage/BlueCup$main.coverage" NAME="main Coverage Results" MODIFIED="1757015822299" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BlueCup$main.coverage" NAME="main Coverage Results" MODIFIED="1757085786040" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/BlueCup$stabilize.coverage" NAME="stabilize Coverage Results" MODIFIED="1756846402941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$bluecup.coverage" NAME="bluecup Coverage Results" MODIFIED="1755934248554" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/BlueCup$message_handler.coverage" NAME="message_handler Coverage Results" MODIFIED="1756710033142" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />

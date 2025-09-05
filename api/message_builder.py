@@ -1,3 +1,4 @@
+from .connection import data_from_sensors
 from .mavlink import mavlink, client, VehicleModes
 from typing import Dict, Callable
 from robot_core import robot
@@ -173,11 +174,14 @@ async def send_ahrs2():
 # ----------------------------------------------------------
 
 async def send_attitude():
+    from . import connection
+    data = connection.data_from_sensors
+
     await client.mav.attitude_send(
         time_boot_ms=client.boot_time_ms(),
-        roll=(12/180)*3.1415926,  # Random roll angle in radians
-        pitch=(12/180)*3.1415926,  # Random pitch angle in radians
-        yaw=(12/180)*3.1415926,
+        roll=(-int(data[0])/180)*3.1415926,  # Random roll angle in radians
+        pitch=(int(data[1])/180)*3.1415926,  # Random pitch angle in radians
+        yaw=(int(data[2])/180)*3.1415926,
         rollspeed=0,
         pitchspeed=0,
         yawspeed=0
@@ -317,7 +321,12 @@ async def send_meminfo():
 # freemem	uint16_t	bytes	Free memory.
 # freemem32 ++	uint32_t	bytes	Free memory (32 bit).
 
-
+from . import connection
+def gain(data):
+    speed = None
+    for i in range(3,6):
+        speed += data[i]
+    return float(speed)
 async def send_named_value_float():
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),

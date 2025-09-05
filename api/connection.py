@@ -2,6 +2,7 @@ import threading
 import log
 import serial
 import time
+import asyncio
 from . import sensors, stabilize
 # Serial configuration
 PORT = "COM5"
@@ -19,9 +20,9 @@ data_from_sensors = None
 # Initialize serial connection
 try:
     ser = serial.Serial(port=PORT, baudrate=BAUD, timeout=1)
-    ser.readline()  # flush initial garbage
+    ser.readline() # flush initial garbage
     logger.info("Warming up the motors...")
-    time.sleep(5)
+    time.sleep(4)
     logger.info(f"Connected to {PORT}")
 except Exception as e:
     logger.error(f"Error connecting to {PORT}: {e}")
@@ -80,3 +81,5 @@ def sensor_handler(saved_yaw_int):
     except Exception as e:
         logger.error(f"Error receiving data from MPU: {e}")
         return None
+
+

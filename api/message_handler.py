@@ -15,7 +15,7 @@ async def command_ack_handler(msg: mavlink.MAVLink_command_ack_message):
     pass
 
 
-button_filter = ButtonFilter(delay=0.5)
+button_filter = ButtonFilter(delay=0.3)
 connection.start_serial_thread()
 saved_yaw_int = None
 
@@ -34,15 +34,14 @@ async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
         return
 
     command = Controller(msg)
-    has_input = any([msg.x, msg.y, msg.z, msg.x, button_code])
+    has_input = any([msg.x, msg.y, msg.z, msg.r, button_code])
 
     if has_input:
         thruster_command = command.in_action()
         saved_yaw_int = connection.save_yaw()
-        print(thruster_command)
     else:
         thruster_command = connection.sensor_handler(saved_yaw_int)
-
+    print(thruster_command)
     # Update shared data safely
     with connection.lock:
         connection.latest_data = thruster_command
