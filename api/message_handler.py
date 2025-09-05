@@ -36,12 +36,11 @@ async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
     command = Controller(msg)
     has_input = any([msg.x, msg.y, msg.z, msg.r, button_code])
 
-    if has_input:
-        thruster_command = command.in_action()
-        saved_yaw_int = connection.save_yaw()
-    else:
-        thruster_command = connection.sensor_handler(saved_yaw_int)
-    print(thruster_command)
+    # if has_input:
+    thruster_command = command.in_action()
+    saved_yaw_int = connection.save_yaw()
+    # else:
+    #     thruster_command = connection.sensor_handler(saved_yaw_int)
     # Update shared data safely
     with connection.lock:
         connection.latest_data = thruster_command

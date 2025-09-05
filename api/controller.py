@@ -45,7 +45,7 @@ class Controller:
     Controller class that processes cockpit and controller inputs
     to calculate appropriate motor speeds for the vehicle.
     """
-    GEARS = [0, 100, 200, 300]  # available gears
+    GEARS = [1, 2, 3, 4]  # available gears
 
     def __init__(self, msg, base_gear=0, depth_offset=0, horizontal_offset=100):
 
@@ -77,9 +77,9 @@ class Controller:
             return 0
         else:
             if self.x > 0:
-                self.thrust_power = engaged_gear + self.x
+                self.thrust_power = engaged_gear *self.x
             elif self.x < 0:
-                self.thrust_power = -engaged_gear + self.x
+                self.thrust_power = engaged_gear *self.x
             else:
                 self.thrust_power = self.x
             return self.thrust_power
@@ -98,25 +98,35 @@ class Controller:
         elif self.y != 0:
             return self.pivot()
         elif self.r != 0:
-            return self.horizontal_move()
+            return self.horizontal_move(peripheral=self.NASTY_OFFSET_FOR_M2)
+        elif self.x != 0 :
+            return self.move(peripheral=self.NASTY_OFFSET_FOR_M2)
         else:
+            return self.move(peripheral=0)
 
-            return self.move()
-
-        return ""
-
-    def horizontal_move(self):
+    def horizontal_move(self, peripheral):
         x_power = self.acc()
-        r_power = self.horizontal_thrust
+        r_power = self.r
         z_power = self.vertical_thrust
-        if self.r > 0:
-            return thruster_speed_formatter(m1=r_power, m2=z_power,
-                                            m3=x_power, m4=x_power,
-                                            m5=z_power, m6=r_power)
-        elif self.r < 0:
-            return thruster_speed_formatter(m1=x_power, m2=z_power,
-                                            m3=r_power, m4=r_power,
-                                            m5=z_power, m6=x_power)
+        if -300 < x_power < 300 :
+            if self.r > 0:
+                return thruster_speed_formatter(m1=r_power, m2=z_power + peripheral,
+                                                m3=x_power, m4=x_power,
+                                                m5=z_power, m6=r_power)
+            elif self.r < 0:
+                return thruster_speed_formatter(m1=x_power, m2=z_power + peripheral,
+                                                m3=-r_power, m4=-r_power,
+                                                m5=z_power, m6=x_power)
+        else:
+            if self.r > 0:
+                return thruster_speed_formatter(m1=x_power , m2=z_power + peripheral,
+                                                m3=x_power - r_power, m4=x_power - r_power,
+                                                m5=z_power, m6=x_power)
+            elif self.r < 0:
+                return thruster_speed_formatter(m1=x_power + r_power, m2=z_power + peripheral,
+                                                m3=x_power, m4=x_power,
+                                                m5=z_power, m6=x_power + r_power)
+
         return ""
 
     def pivot(self):
@@ -137,16 +147,18 @@ class Controller:
                                                 m3=x_power, m4=m4,
                                                 m5=z_power, m6=m6)
         else:
+            full_speed_offset = 50
             if self.y > 0:
-                return thruster_speed_formatter(m1=x_power - pivot_power, m2=z_power,
+                return thruster_speed_formatter(m1=x_power - (pivot_power + full_speed_offset), m2=z_power,
                                                 m3=x_power, m4=m4,
                                                 m5=z_power, m6=m6)
             elif self.y < 0:
                 return thruster_speed_formatter(m1=x_power, m2=z_power,
-                                                m3=x_power + pivot_power, m4=m4,
-                                                m5=z_power, m6=m6)
+                                                          m3=x_power + (pivot_power - full_speed_offset), m4=m4,
+                                                          m5=z_power, m6=m6)
 
-        return None
+
+        return ""
 
     def thrusters_off(self):
         """Turn off thrusters and reset gear to base gear."""
@@ -161,10 +173,10 @@ class Controller:
         return thruster_speed_formatter(m1=x_power, m2=z_power, m3=x_power,
                                         m4=x_power, m5=z_power, m6=x_power)
 
-    def move(self):
+    def move(self, peripheral):
         """Handle forward/backward movement."""
         x_power = self.acc()
         self.vertical_thrust = self.z + self.depth_offset
         z_power = self.vertical_thrust
-        return thruster_speed_formatter(m1=x_power, m2=z_power + self.NASTY_OFFSET_FOR_M2, m3=x_power,
+        return thruster_speed_formatter(m1=x_power, m2=z_power + peripheral, m3=x_power,
                                         m4=x_power, m5=z_power, m6=x_power)

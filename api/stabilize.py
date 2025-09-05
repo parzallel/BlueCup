@@ -1,5 +1,3 @@
-# TODO : write an algorithm to stabilize the robot
-# ToDo : write a code to stable the robot in saved yaw
 
 class Stabilize:
 

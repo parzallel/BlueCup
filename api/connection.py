@@ -5,7 +5,7 @@ import time
 import asyncio
 from . import sensors, stabilize
 # Serial configuration
-PORT = "COM5"
+PORT = "COM3"
 BAUD = 9600
 
 # Configure logger
@@ -44,7 +44,7 @@ def serial_cycle():
                 # Write control data if available
                 if latest_data is not None:
                     ser.write((latest_data + "\n").encode())
-                    logger.debug(f"Sent: {latest_data}")
+                    print(f"Sent: {latest_data}")
 
         except Exception as e:
             logger.warning(f"Serial cycle error: {e}")
