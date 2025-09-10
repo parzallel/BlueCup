@@ -1,8 +1,8 @@
-from .connection import data_from_sensors
+import random
+
 from .mavlink import mavlink, client, VehicleModes
 from typing import Dict, Callable
 from robot_core import robot
-import random
 
 
 async def send_heartbeat():
@@ -172,11 +172,9 @@ async def send_ahrs2():
 # lng	int32_t	degE7	Longitude.
 
 # ----------------------------------------------------------
-
+from . import connection
 async def send_attitude():
-    from . import connection
     data = connection.data_from_sensors
-
     await client.mav.attitude_send(
         time_boot_ms=client.boot_time_ms(),
         roll=(-int(data[0])/180)*3.1415926,  # Random roll angle in radians
@@ -321,12 +319,11 @@ async def send_meminfo():
 # freemem	uint16_t	bytes	Free memory.
 # freemem32 ++	uint32_t	bytes	Free memory (32 bit).
 
-from . import connection
 def gain(data):
-    speed = None
-    for i in range(3,6):
+    speed = ""
+    for i in range(3,7):
         speed += data[i]
-    return float(speed)
+    return speed//400
 async def send_named_value_float():
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
@@ -356,7 +353,8 @@ async def send_named_value_float():
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
         name=b"PilotGain",
-        value=0
+        value=gain(connection.latest_data)
+
     )
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
@@ -1182,4 +1180,5 @@ events: Dict[int, tuple[float, Callable]] = {
     mavlink.MAVLINK_MSG_ID_SYSTEM_TIME: (1/3, send_system_time),
     mavlink.MAVLINK_MSG_ID_VFR_HUD: (1/16, send_vfr_hud),
     mavlink.MAVLINK_MSG_ID_VIBRATION: (1/3, send_vibration),
+    mavlink.MAVLINK_MSG_ID_NAMED_VALUE_FLOAT:(1/1,send_named_value_float)
 }

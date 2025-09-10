@@ -17,7 +17,9 @@ def inc_gear():
 buttons = {
     "R1": 2048,
     "L1": 4096,
-    "triangle": 10
+    "L3": 128,
+    "up": 1024,
+    "down": 512
 }
 
 
@@ -32,7 +34,7 @@ def dec_gear():
 
 def thruster_speed_formatter(m1, m2, m3, m4, m5, m6):  # reformats the motor speed in order to pass to arduino
     return (f"m1={-m1 + 1500} "
-            f"m2={m2 + 1500} "
+            f"m2={+m2 + 1500} "
             f"m3={-m3 + 1500} "
             f"m4={-m4 + 1500} "
             f"m5={-m5 + 1500} "
@@ -77,9 +79,9 @@ class Controller:
             return 0
         else:
             if self.x > 0:
-                self.thrust_power = engaged_gear *self.x
+                self.thrust_power = engaged_gear * self.x
             elif self.x < 0:
-                self.thrust_power = engaged_gear *self.x
+                self.thrust_power = engaged_gear * self.x
             else:
                 self.thrust_power = self.x
             return self.thrust_power
@@ -93,39 +95,49 @@ class Controller:
             inc_gear()
         elif self.buttons == buttons["L1"]:
             dec_gear()
-        elif self.buttons == buttons["triangle"]:
+        elif self.buttons == buttons["L3"]:
             self.thrusters_off()
+        elif self.buttons == buttons["up"]:
+            return self.tilt("up")
+        elif self.buttons == buttons["down"]:
+            return self.tilt("down")
         elif self.y != 0:
             return self.pivot()
         elif self.r != 0:
             return self.horizontal_move(peripheral=self.NASTY_OFFSET_FOR_M2)
-        elif self.x != 0 :
+        elif self.x != 0:
             return self.move(peripheral=self.NASTY_OFFSET_FOR_M2)
         else:
             return self.move(peripheral=0)
+
+    def tilt(self , direction):
+        x_power = self.acc()
+        if direction == "up":
+            tilt_power = 150
+        else :
+            tilt_power = -150
+        z_power = self.vertical_thrust
+        return thruster_speed_formatter(m1=x_power, m2= z_power + tilt_power,
+                                        m3=x_power, m4=x_power,
+                                        m5=z_power, m6=x_power)
+
+
 
     def horizontal_move(self, peripheral):
         x_power = self.acc()
         r_power = self.r
         z_power = self.vertical_thrust
-        if -300 < x_power < 300 :
+        if -300 < x_power < 300:
             if self.r > 0:
-                return thruster_speed_formatter(m1=r_power, m2=z_power + peripheral,
+                return thruster_speed_formatter(m1=-r_power, m2=z_power + peripheral,
                                                 m3=x_power, m4=x_power,
                                                 m5=z_power, m6=r_power)
             elif self.r < 0:
                 return thruster_speed_formatter(m1=x_power, m2=z_power + peripheral,
-                                                m3=-r_power, m4=-r_power,
+                                                m3=r_power, m4=-r_power,
                                                 m5=z_power, m6=x_power)
         else:
-            if self.r > 0:
-                return thruster_speed_formatter(m1=x_power , m2=z_power + peripheral,
-                                                m3=x_power - r_power, m4=x_power - r_power,
-                                                m5=z_power, m6=x_power)
-            elif self.r < 0:
-                return thruster_speed_formatter(m1=x_power + r_power, m2=z_power + peripheral,
-                                                m3=x_power, m4=x_power,
-                                                m5=z_power, m6=x_power + r_power)
+            print(">>> speed too high , lower the gear")
 
         return ""
 
@@ -154,9 +166,8 @@ class Controller:
                                                 m5=z_power, m6=m6)
             elif self.y < 0:
                 return thruster_speed_formatter(m1=x_power, m2=z_power,
-                                                          m3=x_power + (pivot_power - full_speed_offset), m4=m4,
-                                                          m5=z_power, m6=m6)
-
+                                                m3=x_power + (pivot_power - full_speed_offset), m4=m4,
+                                                m5=z_power, m6=m6)
 
         return ""
 
