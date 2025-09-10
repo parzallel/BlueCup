@@ -15,14 +15,14 @@ logger = log.getLogger(__name__)
 # Shared state
 lock = threading.Lock()
 latest_data = None
-data_from_sensors = None
+data_from_sensors = None 
 
 # Initialize serial connection
 try:
     ser = serial.Serial(port=PORT, baudrate=BAUD, timeout=1)
     ser.readline() # flush initial garbage
     logger.info("Warming up the motors...")
-    time.sleep(4)
+    time.sleep(6)
     logger.info(f"Connected to {PORT}")
 except Exception as e:
     logger.error(f"Error connecting to {PORT}: {e}")
@@ -40,16 +40,16 @@ def serial_cycle():
                 raw_line = ser.readline().decode("utf-8").strip()
                 if raw_line:
                     data_from_sensors = raw_line.split(",")
-
                 # Write control data if available
                 if latest_data is not None:
                     ser.write((latest_data + "\n").encode())
-                    logger.debug(f"Sent: {latest_data}")
+                    print(f"Sent: {latest_data}")
+                    logger.debug(f"sent : {latest_data}")
 
         except Exception as e:
             logger.warning(f"Serial cycle error: {e}")
 
-        time.sleep(0.11)  # prevent flooding the serial line
+        time.sleep(0)  # prevent flooding the serial line
 
 
 def start_serial_thread():
@@ -70,7 +70,7 @@ def save_yaw():
         return None
 
 
-def sensor_handler(saved_yaw_int):
+def  sensor_handler(saved_yaw_int):
     """Format sensor data and stabilize robot."""
     global data_from_sensors
 

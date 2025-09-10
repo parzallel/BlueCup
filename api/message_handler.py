@@ -18,33 +18,93 @@ async def command_ack_handler(msg: mavlink.MAVLink_command_ack_message):
 button_filter = ButtonFilter(delay=0.3)
 connection.start_serial_thread()
 saved_yaw_int = None
+command = None
+mode = "stabilize"  # default mode
+is_input_hold = False
+looped_command = None
 
+def toggle_mode(button_code: int):
+    """Toggle between stabilize and manual mode on triangle button."""
+    global mode
+    if button_code == 10:
+        mode = "manual" if mode == "stabilize" else "stabilize"
+
+        # Choose color: green for stabilize, cyan for manual
+        color = "\033[92m" if mode == "stabilize" else "\033[96m"
+        reset = "\033[0m"
+
+        print(f"{color}>>> Mode switched to: {mode}{reset}")
+        return True  # mode toggled
+    return False
+def input_hold(button_code: int, data):
+    """Toggle between stabilize and manual mode on triangle button."""
+    global is_input_hold
+    global looped_command
+    looped_command = data
+    if button_code == 256:
+        is_input_hold = False if is_input_hold  else not is_input_hold
+
+        # Choose color: green for stabilize, cyan for manual
+        color = "\033[92m" if mode == "stabilize" else "\033[96m"
+        reset = "\033[0m"
+
+        print(f"{color}>>> Input hold : {is_input_hold }{reset}")
+        return True  # mode toggled
+    return False
+
+def process_stabilize(msg, command):
+    """Process control in stabilize mode."""
+    global saved_yaw_int
+    has_input = any([msg.x, msg.y, msg.z, msg.r, msg.buttons])
+    if has_input:
+        thruster_command = command.in_action()
+        saved_yaw_int = connection.save_yaw()
+
+    else:
+        thruster_command = connection.sensor_handler(saved_yaw_int)
+    return thruster_command
+
+def process_manual(msg, command):
+    """Process control in manual mode."""
+    global saved_yaw_int
+    saved_yaw_int = connection.save_yaw()
+    return command.in_action()  # placeholder
 
 
 
 async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
     """Handle manual control messages from MAVLink."""
+    global command
 
-    global saved_yaw_int
-
-    button_code = msg.buttons
-
+    # Create command object
+    command = Controller(msg)
     # Apply button delay filter
-    if not button_filter.allow(button_code) and button_code != 0:
+    if not button_filter.allow(msg.buttons) and msg.buttons != 0:
         return
 
-    command = Controller(msg)
-    has_input = any([msg.x, msg.y, msg.z, msg.r, button_code])
+    # Handle mode toggle
+    if toggle_mode(msg.buttons):
+        return
+    # Handle input hold mode
+    if input_hold(msg.buttons , command):
+        return
 
-    if has_input:
-        thruster_command = command.in_action()
-        saved_yaw_int = connection.save_yaw()
-    else:
-        thruster_command = connection.sensor_handler(saved_yaw_int)
-    print(thruster_command)
+    if is_input_hold and mode == "stabilize":
+        thruster_command = looped_command
+        return
+
+    # Process based on current mode
+    if mode == "stabilize":
+        thruster_command = process_stabilize(msg, command)
+    else:  # manual
+
+        thruster_command = process_manual(msg, command)
+
     # Update shared data safely
     with connection.lock:
         connection.latest_data = thruster_command
+
+
 
 
 
