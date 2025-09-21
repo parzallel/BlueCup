@@ -1,8 +1,19 @@
 from codecs import xmlcharrefreplace_errors
-
-from main import BASE_GEAR
+from robot_core import robot
+from main import BASE_GEAR, BRIGHTNESS
 
 CURRENT_GEAR = BASE_GEAR
+CURRENT_BRIGHTNESS = BRIGHTNESS
+
+
+def thrusters_off():
+    """Turn off thrusters and reset gear to base gear."""
+
+    global CURRENT_GEAR
+    CURRENT_GEAR = BASE_GEAR
+
+    return thruster_speed_formatter(m1=1500, m2=1500, m3=1500,
+                                    m4=1500, m5=1500, m6=1500)
 
 
 def inc_gear():
@@ -17,9 +28,11 @@ def inc_gear():
 buttons = {
     "R1": 2048,
     "L1": 4096,
-    "L3": 128,
+    "L3": 256,
     "up": 1024,
-    "down": 512
+    "down": 512,
+    "left": 8192,
+    "right": 16384
 }
 
 
@@ -33,13 +46,33 @@ def dec_gear():
 
 
 def thruster_speed_formatter(m1, m2, m3, m4, m5, m6):  # reformats the motor speed in order to pass to arduino
-    return (f"m1={-m1 + 1500} "
-            f"m2={+m2 + 1500} "
-            f"m3={-m3 + 1500} "
+    return (f"m1={+m1 + 1500} "
+            f"m2={-m2 + 1500} "
+            f"m3={+m3 + 1500} "
             f"m4={-m4 + 1500} "
-            f"m5={-m5 + 1500} "
+            f"m5={+m5 + 1500} "
             f"m6={-m6 + 1500}"
             )
+
+
+def led_brightness_formatter(light):
+    return f"l={light}"
+
+
+def brighter():
+    global CURRENT_BRIGHTNESS
+    if CURRENT_BRIGHTNESS < 250 :
+        CURRENT_BRIGHTNESS += 50
+        return led_brightness_formatter(CURRENT_BRIGHTNESS)
+    return None
+
+
+def dimmer():
+    global CURRENT_BRIGHTNESS
+    if CURRENT_BRIGHTNESS > 0 :
+        CURRENT_BRIGHTNESS -= 50
+        return led_brightness_formatter(CURRENT_BRIGHTNESS)
+    return  None
 
 
 class Controller:
@@ -63,7 +96,7 @@ class Controller:
         self.BASE_GEAR = base_gear
         self.depth_offset = depth_offset
         self.horizontal_offset = horizontal_offset
-        self.NASTY_OFFSET_FOR_M2 = 100
+        self.NASTY_OFFSET_FOR_M2 = 0
 
         # computed powers (will be updated when needed)
         self.thrust_power = 0
@@ -91,16 +124,21 @@ class Controller:
         Automated method that returns suitable motor speeds
         based on cockpit/controller state.
         """
-        if self.buttons == buttons["R1"]:
+        if self.buttons == buttons["up"]:
             inc_gear()
-        elif self.buttons == buttons["L1"]:
+        elif self.buttons == buttons["down"]:
             dec_gear()
         elif self.buttons == buttons["L3"]:
-            self.thrusters_off()
-        elif self.buttons == buttons["up"]:
+            thrusters_off()
+            robot.disarm()
+        elif self.buttons == buttons["R1"]:
             return self.tilt("up")
-        elif self.buttons == buttons["down"]:
+        elif self.buttons == buttons["L1"]:
             return self.tilt("down")
+        elif self.buttons == buttons["right"]:
+            return brighter()
+        elif self.buttons == buttons["left"]:
+            return dimmer()
         elif self.y != 0:
             return self.pivot()
         elif self.r != 0:
@@ -109,19 +147,26 @@ class Controller:
             return self.move(peripheral=self.NASTY_OFFSET_FOR_M2)
         else:
             return self.move(peripheral=0)
+        return None
 
-    def tilt(self , direction):
+    def tilt(self, direction):
         x_power = self.acc()
         if direction == "up":
-            tilt_power = 150
-        else :
-            tilt_power = -150
+            tilt_power = 250
+        else:
+            tilt_power = -250
+        pivot_power = int(self.y * 1.5)
+
         z_power = self.vertical_thrust
-        return thruster_speed_formatter(m1=x_power, m2= z_power + tilt_power,
-                                        m3=x_power, m4=x_power,
-                                        m5=z_power, m6=x_power)
+        if self.y >= 0:
 
-
+            return thruster_speed_formatter(m1=x_power, m2=z_power + tilt_power,
+                                            m3=x_power + pivot_power, m4=x_power,
+                                            m5=z_power, m6=x_power)
+        else:
+            return thruster_speed_formatter(m1=x_power - pivot_power, m2=z_power + tilt_power,
+                                            m3=x_power, m4=x_power,
+                                            m5=z_power, m6=x_power)
 
     def horizontal_move(self, peripheral):
         x_power = self.acc()
@@ -143,7 +188,7 @@ class Controller:
 
     def pivot(self):
         """Handle pivoting movement based on y-axis input."""
-        pivot_power = self.y * 2
+        pivot_power = int(self.y * 1.5)
         x_power = self.acc()
         z_power = self.vertical_thrust
         m4 = x_power
@@ -159,7 +204,7 @@ class Controller:
                                                 m3=x_power, m4=m4,
                                                 m5=z_power, m6=m6)
         else:
-            full_speed_offset = 50
+            full_speed_offset = 125
             if self.y > 0:
                 return thruster_speed_formatter(m1=x_power - (pivot_power + full_speed_offset), m2=z_power,
                                                 m3=x_power, m4=m4,
@@ -170,19 +215,6 @@ class Controller:
                                                 m5=z_power, m6=m6)
 
         return ""
-
-    def thrusters_off(self):
-        """Turn off thrusters and reset gear to base gear."""
-        x_power = self.acc()
-        self.vertical_thrust = self.z
-        z_power = self.vertical_thrust
-
-        global CURRENT_GEAR
-        CURRENT_GEAR = self.BASE_GEAR
-
-        print("WARNING: motors are off")
-        return thruster_speed_formatter(m1=x_power, m2=z_power, m3=x_power,
-                                        m4=x_power, m5=z_power, m6=x_power)
 
     def move(self, peripheral):
         """Handle forward/backward movement."""

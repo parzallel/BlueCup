@@ -1,5 +1,7 @@
 import time
 import log
+
+from api import connection , controller
 from hardware_interface import communication
 from hardware_interface import motors
 from hardware_interface import sensors
@@ -32,7 +34,7 @@ current_target_movement = {
 current_thruster_outputs: list[float] = []  # Actual values sent to thrusters
 telemetry_data = {
     "depth": 0.0,
-    "temperature": 0.0,
+    "temperature": 1.0,
     "imu": {},  # e.g., {'ax': 0, 'ay': 0, 'az': 0, ...}
     "battery_voltage": 0.0,
     "camera_pan": 0,
@@ -70,7 +72,7 @@ logger.info("ROV Initialized Successfully.")
 def arm() -> bool:
     """Arms the ROV, enabling motor control."""
     global is_armed
-    if not communication.is_connected():
+    if not connection.is_connected():
         logger.warning("Cannot arm: ROV not connected.")
         return False
     is_armed = True
@@ -82,7 +84,7 @@ def disarm() -> bool:
     """Disarms the ROV, disabling motor control and stopping motors."""
     global is_armed
     is_armed = False
-    motors.stop_all_motors()
+    controller.thrusters_off()
     logger.info("ROV Disarmed. Motors stopped.")
     return True
 

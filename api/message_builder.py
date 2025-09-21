@@ -5,10 +5,19 @@ from typing import Dict, Callable
 from robot_core import robot
 
 
+current_mode = VehicleModes.STABILIZE.value  # default
+
+def change_mode(mode):
+    global current_mode
+    if mode == "stabilize":
+        current_mode = VehicleModes.STABILIZE.value
+    elif mode == "manual":
+        current_mode = VehicleModes.MANUAL.value
+
 async def send_heartbeat():
     base_mode = mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | mavlink.MAV_MODE_FLAG_MANUAL_INPUT_ENABLED
-    custom_mode = VehicleModes.MANUAL.value
-
+    custom_mode = current_mode
+    
     if robot.is_armed:
         base_mode |= mavlink.MAV_MODE_FLAG_SAFETY_ARMED
 
@@ -232,11 +241,13 @@ async def send_ekf_status_report():
 
 # ----------------------------------------------------------------
 
+from . import gps
+gps.run_gps_tracker()
 async def send_global_position_int():
     await client.mav.global_position_int_send(
         time_boot_ms=client.boot_time_ms(),
-        lat=int(robot.lat*1e7),
-        lon=int(robot.lon*1e7),
+        lat=int(gps.lat*1e7),
+        lon=int(gps.lon*1e7),
         alt=int(robot.alt*1e3),
         relative_alt=0,
         vx=0,
@@ -314,21 +325,16 @@ async def send_meminfo():
         freemem32=0
     )
 
-
 # brkval	uint16_t		Heap top.
 # freemem	uint16_t	bytes	Free memory.
 # freemem32 ++	uint32_t	bytes	Free memory (32 bit).
 
-def gain(data):
-    speed = ""
-    for i in range(3,7):
-        speed += data[i]
-    return speed//400
+from . import controller , message_handler
 async def send_named_value_float():
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
         name=b"CamTilt",
-        value=0
+        value= controller.CURRENT_GEAR + 1
     )
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
@@ -343,7 +349,7 @@ async def send_named_value_float():
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
         name=b"Lights1",
-        value=0
+        value=controller.CURRENT_BRIGHTNESS // 25
     )
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
@@ -353,13 +359,13 @@ async def send_named_value_float():
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
         name=b"PilotGain",
-        value=gain(connection.latest_data)
+        value= message_handler.speed//4
 
     )
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
         name=b"InputHold",
-        value=0
+        value= message_handler.is_input_hold
     )
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
@@ -401,7 +407,7 @@ async def send_nav_controller_output():
 # aspd_error	float	m/s	Current airspeed error
 # xtrack_error	float	m	Current crosstrack error on x-y plane
 
-
+from . import connection
 async def send_power_status():
     await client.mav.power_status_send(
         Vcc=0,
@@ -492,7 +498,7 @@ async def send_sys_status():
         onboard_control_sensors_enabled=0,
         onboard_control_sensors_health=0,
         load=0,
-        voltage_battery=21000,
+        voltage_battery=10,
         current_battery=-1,
         battery_remaining=-1,
         drop_rate_comm=0,
@@ -775,7 +781,7 @@ async def send_system_time():
 async def send_rangefinder():
     await client.mav.rangefinder_send(
         distance=0,
-        voltage=0
+        voltage=11
     )
 
 
@@ -863,14 +869,13 @@ async def send_distance_sensor():
 # vertical_fov ++	float	rad	invalid:0	Vertical Field of View (angle) where the distance measurement is valid and the field of view is known. Otherwise this is set to 0.
 # quaternion ++	float[4]		invalid:[0]	Quaternion of the sensor orientation in vehicle body frame (w, x, y, z order, zero-rotation is 1, 0, 0, 0). Zero-rotation is along the vehicle body x-axis. This field is required if the orientation is set to MAV_SENSOR_ROTATION_CUSTOM. Set it to 0 if invalid."
 # signal_quality ++	uint8_t	%	invalid:0	Signal quality of the sensor. Specific to each sensor type, representing the relation of the signal strength with the target reflectivity, distance, size or aspect, but normalised as a percentage. 0 = unknown/unset signal quality, 1 = invalid signal, 100 = perfect signal.
-
 async def send_battery_status():
     await client.mav.battery_status_send(
         id=0,
         battery_function=0,
         type=0,
         temperature=32767,
-        voltages=[0] * 16,
+        voltages=12,
         current_battery=-1,
         current_consumed=-1,
         energy_consumed=-1,
@@ -1180,5 +1185,5 @@ events: Dict[int, tuple[float, Callable]] = {
     mavlink.MAVLINK_MSG_ID_SYSTEM_TIME: (1/3, send_system_time),
     mavlink.MAVLINK_MSG_ID_VFR_HUD: (1/16, send_vfr_hud),
     mavlink.MAVLINK_MSG_ID_VIBRATION: (1/3, send_vibration),
-    mavlink.MAVLINK_MSG_ID_NAMED_VALUE_FLOAT:(1/1,send_named_value_float)
+    mavlink.MAVLINK_MSG_ID_NAMED_VALUE_FLOAT:(1/12,send_named_value_float)
 }
