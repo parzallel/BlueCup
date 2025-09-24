@@ -70,7 +70,6 @@ async def nav_takeoff(msg: mavlink.MAVLink_command_long_message):
 async def do_set_home(msg: mavlink.MAVLink_command_long_message):
     pass
 
-
 # msg.param1:Use current location (BOOL_FALSE: use specified location). Values not equal to 0 or 1 are invalid.	BOOL
 # msg.param2:Roll angle (of surface). Range: -180..180 degrees. NAN or 0 means value not set. 0.01 indicates zero roll.	min: -180 max: 180	deg
 # msg.param3:Pitch angle (of surface). Range: -90..90 degrees. NAN or 0 means value not set. 0.01 means zero pitch.	min: -90 max: 90	deg
@@ -98,7 +97,6 @@ async def do_reposition(msg: mavlink.MAVLink_command_int_message):
 
 async def request_message(msg: mavlink.MAVLink_command_long_message):
     pass
-
 # msg.param1:	The MAVLink message ID of the requested message.	min: 0 max: 16777215 inc: 1
 # msg.param2: 	Use for index ID, if required. Otherwise, the use of this parameter (if any) must be defined in the requested message. By default assumed not used (0).
 # msg.param3:The use of this parameter (if any), must be defined in the requested message. By default assumed not used (0).

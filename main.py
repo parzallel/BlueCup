@@ -5,7 +5,7 @@ import log
 
 
 BASE_GEAR = 0
-
+BRIGHTNESS = 0
 
 logger = log.getLogger(__name__)
 

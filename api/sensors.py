@@ -5,20 +5,15 @@ class SensorFormatter:
         self.roll = ardu_data[0]
         self.pitch = ardu_data[1]
         self.yaw = ardu_data[2]
+        self.voltage = ardu_data[3]
 
     def mpu_formatter(self):
         return {"roll": self.roll,
                 "pitch": self.pitch,
                 "yaw": self.yaw}
 
-    def gps_formatter(self):
-        pass
-
-    def depth_formatter(self):
-        pass
-
     def voltage_formatter(self):
-        pass
+        return {"voltage": self.voltage}
 
 
 class MPU:
@@ -47,11 +42,10 @@ class MPU:
         return truster_power
 
     # (-------YAW---------)
-    def get_yaw_power(self , diff):
+    def get_yaw_power(self, diff):
         diff = abs(diff)
         t_power = 20  # change this for further power management
         while diff >= 10:
             diff //= 10
         truster_power = diff * t_power
         return truster_power
-

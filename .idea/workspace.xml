@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="28cec0e0-8c87-408c-ba9c-b1ccfb3a2908" name="Changes" comment="lot of shit changed &#10;button delay fixed&#10;controller cleaned &#10;i dont remember the others">
-      <change beforePath="$PROJECT_DIR$/.idea/BlueCup.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/BlueCup.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="28cec0e0-8c87-408c-ba9c-b1ccfb3a2908" name="Changes" comment="finished for test">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/connection.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/connection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/gps.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/gps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/message_builder.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/message_builder.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/message_handler.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/message_handler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/temp/camera.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/temp/camera.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +80,7 @@
     &quot;Python.connection.executor&quot;: &quot;Run&quot;,
     &quot;Python.controlle-1r.executor&quot;: &quot;Run&quot;,
     &quot;Python.controller.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gps.executor&quot;: &quot;Run&quot;,
     &quot;Python.main (2).executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.message_handler.executor&quot;: &quot;Run&quot;,
@@ -203,6 +199,32 @@
       <workItem from="1757258946753" duration="2394000" />
       <workItem from="1757311137275" duration="8105000" />
       <workItem from="1757486697885" duration="3538000" />
+      <workItem from="1757509390340" duration="566000" />
+      <workItem from="1757517170041" duration="1026000" />
+      <workItem from="1757589845345" duration="42000" />
+      <workItem from="1757590274272" duration="1936000" />
+      <workItem from="1757604346021" duration="1854000" />
+      <workItem from="1757875256985" duration="564000" />
+      <workItem from="1758027138159" duration="1420000" />
+      <workItem from="1758029810074" duration="3009000" />
+      <workItem from="1758177485181" duration="713000" />
+      <workItem from="1758180946076" duration="10354000" />
+      <workItem from="1758197441691" duration="3108000" />
+      <workItem from="1758201243852" duration="3827000" />
+      <workItem from="1758205134972" duration="218000" />
+      <workItem from="1758205945942" duration="766000" />
+      <workItem from="1758271468258" duration="7466000" />
+      <workItem from="1758284344699" duration="17388000" />
+      <workItem from="1758387366511" duration="173000" />
+      <workItem from="1758387553145" duration="2641000" />
+      <workItem from="1758446716028" duration="1571000" />
+      <workItem from="1758449400209" duration="12000" />
+      <workItem from="1758449420555" duration="1313000" />
+      <workItem from="1758459964801" duration="546000" />
+      <workItem from="1758460762186" duration="314000" />
+      <workItem from="1758618714466" duration="532000" />
+      <workItem from="1758619483076" duration="1223000" />
+      <workItem from="1758645108505" duration="2271000" />
     </task>
     <task id="LOCAL-00001" summary="Pc commit">
       <option name="closed" value="true" />
@@ -332,7 +354,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757016540961</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="finished for test">
+      <option name="closed" value="true" />
+      <created>1757509424039</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1757509424039</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -362,10 +392,12 @@
     <MESSAGE value="pitch stabilize.py fixed &#10;read problem fixed" />
     <MESSAGE value="new era opened" />
     <MESSAGE value="lot of shit changed &#10;button delay fixed&#10;controller cleaned &#10;i dont remember the others" />
-    <option name="LAST_COMMIT_MESSAGE" value="lot of shit changed &#10;button delay fixed&#10;controller cleaned &#10;i dont remember the others" />
+    <MESSAGE value="finished for test" />
+    <option name="LAST_COMMIT_MESSAGE" value="finished for test" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/BlueCup$camera.coverage" NAME="camera Coverage Results" MODIFIED="1757148877471" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api/temp" />
+    <SUITE FILE_PATH="coverage/BlueCup$gps.coverage" NAME="gps Coverage Results" MODIFIED="1758647114786" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$bluecup.coverage" NAME="bluecup Coverage Results" MODIFIED="1755934248554" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
     <SUITE FILE_PATH="coverage/BlueCup$message_handler.coverage" NAME="message_handler Coverage Results" MODIFIED="1756710033142" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$sensors.coverage" NAME="sensors Coverage Results" MODIFIED="1756045819677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hardware_interface" />
@@ -375,7 +407,7 @@
     <SUITE FILE_PATH="coverage/BlueCup$communication.coverage" NAME="communication Coverage Results" MODIFIED="1755790730803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/hardware_interface" />
     <SUITE FILE_PATH="coverage/BlueCup$controller.coverage" NAME="controller Coverage Results" MODIFIED="1755503109889" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
     <SUITE FILE_PATH="coverage/BlueCup$main__2_.coverage" NAME="main (2) Coverage Results" MODIFIED="1756195388592" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\idrai\PycharmProjects\BlueCup" />
-    <SUITE FILE_PATH="coverage/BlueCup$main.coverage" NAME="main Coverage Results" MODIFIED="1757488916435" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/BlueCup$main.coverage" NAME="main Coverage Results" MODIFIED="1758647118264" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/BlueCup$stabilize.coverage" NAME="stabilize Coverage Results" MODIFIED="1756846402941" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api" />
   </component>
 </project>

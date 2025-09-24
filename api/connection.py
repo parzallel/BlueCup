@@ -4,8 +4,9 @@ import serial
 import time
 import asyncio
 from . import sensors, stabilize
+
 # Serial configuration
-PORT = "COM5"
+PORT = "COM11"
 BAUD = 9600
 
 # Configure logger
@@ -16,7 +17,7 @@ logger = log.getLogger(__name__)
 lock = threading.Lock()
 latest_data = None
 data_from_sensors = None 
-
+voltage = 0
 # Initialize serial connection
 try:
     ser = serial.Serial(port=PORT, baudrate=BAUD, timeout=1)
@@ -28,7 +29,11 @@ except Exception as e:
     logger.error(f"Error connecting to {PORT}: {e}")
     exit(1)
 
-
+def is_connected():
+    """
+    Checks if the serial port is connected.
+    """
+    return ser is not None and ser.is_open
 def serial_cycle():
     """Continuously handle reading from sensors and writing to Arduino."""
     global latest_data, data_from_sensors
@@ -40,11 +45,12 @@ def serial_cycle():
                 raw_line = ser.readline().decode("utf-8").strip()
                 if raw_line:
                     data_from_sensors = raw_line.split(",")
+
                 # Write control data if available
                 if latest_data is not None:
                     ser.write((latest_data + "\n").encode())
-                    print(f"Sent: {latest_data}")
-                    logger.debug(f"sent : {latest_data}")
+                    # print(f"Sent: {latest_data}")
+                    # logger  .debug(f"sent : {latest_data}")
 
         except Exception as e:
             logger.warning(f"Serial cycle error: {e}")
@@ -72,11 +78,12 @@ def save_yaw():
 
 def  sensor_handler(saved_yaw_int):
     """Format sensor data and stabilize robot."""
-    global data_from_sensors
+    global data_from_sensors , voltage
 
     try:
         formatted_data = sensors.SensorFormatter(data_from_sensors)
         mpu = sensors.MPU(formatted_data.mpu_formatter())
+        voltage = formatted_data.voltage
         return stabilize.Stabilize(mpu, saved_yaw=saved_yaw_int).make_stable()
     except Exception as e:
         logger.error(f"Error receiving data from MPU: {e}")

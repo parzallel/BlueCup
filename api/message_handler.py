@@ -1,8 +1,10 @@
+import logging
+from . import message_builder
 from .button_filter import ButtonFilter
 from .mavlink import mavlink, client
 from . import command_handler, connection
 from .controller import Controller
-
+from robot_core import robot
 K_MODE_MANUAL = 0b0000000000000010
 
 
@@ -22,20 +24,18 @@ command = None
 mode = "stabilize"  # default mode
 is_input_hold = False
 looped_command = None
+speed = 0
+
 
 def toggle_mode(button_code: int):
     """Toggle between stabilize and manual mode on triangle button."""
     global mode
-    if button_code == 10:
-        mode = "manual" if mode == "stabilize" else "stabilize"
+    if button_code == 32768:
+        mode = "manual"
+    elif button_code == 10:
+        mode = "stabilize"
+    message_builder.change_mode(mode)
 
-        # Choose color: green for stabilize, cyan for manual
-        color = "\033[92m" if mode == "stabilize" else "\033[96m"
-        reset = "\033[0m"
-
-        print(f"{color}>>> Mode switched to: {mode}{reset}")
-        return True  # mode toggled
-    return False
 def input_hold(button_code: int, data):
     """Toggle between stabilize and manual mode on triangle button."""
     global is_input_hold
@@ -54,56 +54,55 @@ def input_hold(button_code: int, data):
 
 def process_stabilize(msg, command):
     """Process control in stabilize mode."""
-    global saved_yaw_int
+    global saved_yaw_int , speed
+    speed = command.acc()
     has_input = any([msg.x, msg.y, msg.z, msg.r, msg.buttons])
     if has_input:
         thruster_command = command.in_action()
         saved_yaw_int = connection.save_yaw()
-
     else:
         thruster_command = connection.sensor_handler(saved_yaw_int)
     return thruster_command
 
 def process_manual(msg, command):
     """Process control in manual mode."""
-    global saved_yaw_int
+    global saved_yaw_int , speed
     saved_yaw_int = connection.save_yaw()
+    speed = command.acc()
     return command.in_action()  # placeholder
-
 
 
 async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
     """Handle manual control messages from MAVLink."""
     global command
-
     # Create command object
-    command = Controller(msg)
-    # Apply button delay filter
-    if not button_filter.allow(msg.buttons) and msg.buttons != 0:
-        return
+    if robot.is_armed :
+        command = Controller(msg)
+        # Apply button delay filter
+        if not button_filter.allow(msg.buttons) and msg.buttons != 0:
+            return
 
-    # Handle mode toggle
-    if toggle_mode(msg.buttons):
-        return
-    # Handle input hold mode
-    if input_hold(msg.buttons , command):
-        return
+        # Handle mode toggle
+        if msg.buttons == 32768 or msg.buttons == 10:
+            toggle_mode(msg.buttons)
+        # Handle input hold mode
+        if input_hold(msg.buttons , command):
+            return
 
-    if is_input_hold and mode == "stabilize":
-        thruster_command = looped_command
-        return
+        if is_input_hold :
+            thruster_command = looped_command
+            return
+        # Process based on current mode
+        if mode == "stabilize":
+            thruster_command = process_stabilize(msg, command)
+        else:  # manual
 
-    # Process based on current mode
-    if mode == "stabilize":
-        thruster_command = process_stabilize(msg, command)
-    else:  # manual
-
-        thruster_command = process_manual(msg, command)
-
-    # Update shared data safely
-    with connection.lock:
-        connection.latest_data = thruster_command
-
+            thruster_command = process_manual(msg, command)
+        # Update shared data safely
+        with connection.lock:
+            connection.latest_data = thruster_command
+    else :
+        logging.warning("ROV is not armed")
 
 
 
