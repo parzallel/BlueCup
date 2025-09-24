@@ -306,7 +306,6 @@
 #
 import threading
 import time
-from pickletools import long1
 
 import serial
 from math import radians, sin, cos, atan2, sqrt
@@ -396,18 +395,7 @@ def gps_worker(port):
                     continue
 
 def run_gps_tracker():
-    import serial.tools.list_ports
-    ports = serial.tools.list_ports.comports()
-    port = None
-    for p in ports:
-        if 'USB' in p.description or 'Serial' in p.description:
-            port = p.device
-            break
-    if not port:
-        raise RuntimeError("No GPS port found.")
-
+    port = "com7"
     # Run worker in background
     t = threading.Thread(target=gps_worker, args=(port,), daemon=True)
     t.start()
-
-

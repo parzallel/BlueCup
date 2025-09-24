@@ -4,8 +4,8 @@ from .mavlink import mavlink, client, VehicleModes
 from typing import Dict, Callable
 from robot_core import robot
 
-
 current_mode = VehicleModes.STABILIZE.value  # default
+
 
 def change_mode(mode):
     global current_mode
@@ -14,10 +14,11 @@ def change_mode(mode):
     elif mode == "manual":
         current_mode = VehicleModes.MANUAL.value
 
+
 async def send_heartbeat():
     base_mode = mavlink.MAV_MODE_FLAG_CUSTOM_MODE_ENABLED | mavlink.MAV_MODE_FLAG_MANUAL_INPUT_ENABLED
     custom_mode = current_mode
-    
+
     if robot.is_armed:
         base_mode |= mavlink.MAV_MODE_FLAG_SAFETY_ARMED
 
@@ -65,9 +66,9 @@ async def send_gps_raw_int():
     await client.mav.gps_raw_int_send(
         time_usec=client.boot_time_usec(),
         fix_type=0,  # change this based on your gps state
-        lat=int(robot.lat*1e7),
-        lon=int(robot.lon*1e7),
-        alt=int(robot.alt*1e3),
+        lat=int(robot.lat * 1e7),
+        lon=int(robot.lon * 1e7),
+        alt=int(robot.alt * 1e3),
         eph=65535,
         epv=65535,
         vel=65535,
@@ -182,13 +183,15 @@ async def send_ahrs2():
 
 # ----------------------------------------------------------
 from . import connection
+
+
 async def send_attitude():
     data = connection.data_from_sensors
     await client.mav.attitude_send(
         time_boot_ms=client.boot_time_ms(),
-        roll=(-int(data[0])/180)*3.1415926,  # Random roll angle in radians
-        pitch=(int(data[1])/180)*3.1415926,  # Random pitch angle in radians
-        yaw=(int(data[2])/180)*3.1415926,
+        roll=(-int(data[0]) / 180) * 3.1415926,  # Random roll angle in radians
+        pitch=(int(data[1]) / 180) * 3.1415926,  # Random pitch angle in radians
+        yaw=(int(data[2]) / 180) * 3.1415926,
         rollspeed=0,
         pitchspeed=0,
         yawspeed=0
@@ -242,13 +245,17 @@ async def send_ekf_status_report():
 # ----------------------------------------------------------------
 
 from . import gps
+
 gps.run_gps_tracker()
+
+
 async def send_global_position_int():
+    print(gps.lat , gps.lon)
     await client.mav.global_position_int_send(
         time_boot_ms=client.boot_time_ms(),
-        lat=int(gps.lat*1e7),
-        lon=int(gps.lon*1e7),
-        alt=int(robot.alt*1e3),
+        lat=int(gps.lat * 1e7),
+        lon=int(gps.lon * 1e7),
+        alt=int(robot.alt * 1e3),
         relative_alt=0,
         vx=0,
         vy=0,
@@ -271,9 +278,9 @@ async def send_global_position_int():
 async def send_home_position():
     await client.mav.home_position_send(
         time_usec=client.boot_time_usec(),
-        latitude=int(robot.lat*1e7),
-        longitude=int(robot.lon*1e7),
-        altitude=int(robot.alt*1e3),
+        latitude=int(robot.lat * 1e7),
+        longitude=int(robot.lon * 1e7),
+        altitude=int(robot.alt * 1e3),
         x=0,
         y=0,
         z=0,
@@ -325,16 +332,19 @@ async def send_meminfo():
         freemem32=0
     )
 
+
 # brkval	uint16_t		Heap top.
 # freemem	uint16_t	bytes	Free memory.
 # freemem32 ++	uint32_t	bytes	Free memory (32 bit).
 
-from . import controller , message_handler
+from . import controller, message_handler
+
+
 async def send_named_value_float():
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
         name=b"CamTilt",
-        value= controller.CURRENT_GEAR + 1
+        value=controller.CURRENT_GEAR + 1
     )
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
@@ -359,13 +369,13 @@ async def send_named_value_float():
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
         name=b"PilotGain",
-        value= message_handler.speed//4
+        value=message_handler.speed // 4
 
     )
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
         name=b"InputHold",
-        value= message_handler.is_input_hold
+        value=message_handler.is_input_hold
     )
     await client.mav.named_value_float_send(
         time_boot_ms=client.boot_time_ms(),
@@ -408,6 +418,8 @@ async def send_nav_controller_output():
 # xtrack_error	float	m	Current crosstrack error on x-y plane
 
 from . import connection
+
+
 async def send_power_status():
     await client.mav.power_status_send(
         Vcc=0,
@@ -498,7 +510,7 @@ async def send_sys_status():
         onboard_control_sensors_enabled=0,
         onboard_control_sensors_health=0,
         load=0,
-        voltage_battery=10,
+        voltage_battery=connection.voltage * 1000,
         current_battery=-1,
         battery_remaining=-1,
         drop_rate_comm=0,
@@ -887,6 +899,7 @@ async def send_battery_status():
         fault_bitmask=0,
     )
 
+
 # id	uint8_t			Battery ID Messages with same value are from the same source (instance).
 # battery_function	uint8_t		MAV_BATTERY_FUNCTION	Function of the battery
 # ------------------------------------------------------------------------
@@ -958,6 +971,8 @@ async def send_gimbal_device_attitude_status():
         delta_yaw_velocity=0,
         gimbal_device_id=0
     )
+
+
 # target_system	uint8_t			System ID
 # target_component	uint8_t			Component ID
 # time_boot_ms	uint32_t	ms		Timestamp (time since system boot).
@@ -1020,8 +1035,9 @@ async def send_mag_cal_report():
         new_orientation=0,
         scale_factor=0,
 
-
     )
+
+
 # compass_id	uint8_t			Compass being calibrated.
 # Messages with same value are from the same source (instance).
 # cal_mask	uint8_t			Bitmask of compasses being calibrated.
@@ -1111,6 +1127,7 @@ async def send_mag_cal_progress():
 
     )
 
+
 # compass_id	uint8_t			Compass being calibrated.
 # Messages with same value are from the same source (instance).
 # cal_mask	uint8_t			Bitmask of compasses being calibrated.
@@ -1134,6 +1151,7 @@ async def send_param_value():
 
     # )
 
+
 # param_id	char[16]		Onboard parameter id, terminated by NULL if the length is less than 16 human-readable chars and WITHOUT null termination (NULL) byte if the length is exactly 16 chars - applications have to provide 16+1 bytes storage if the ID is stored as string
 # param_value	float		Onboard parameter value
 # param_type	uint8_t	MAV_PARAM_TYPE	Onboard parameter type.
@@ -1154,36 +1172,36 @@ async def send_param_value():
 
 
 events: Dict[int, tuple[float, Callable]] = {
-    mavlink.MAVLINK_MSG_ID_AHRS: (1/16, send_ahrs),
-    mavlink.MAVLINK_MSG_ID_AHRS2: (1/16, send_ahrs2),
-    mavlink.MAVLINK_MSG_ID_ATTITUDE: (1/16, send_attitude),
-    mavlink.MAVLINK_MSG_ID_BATTERY_STATUS: (1/3, send_battery_status),
-    mavlink.MAVLINK_MSG_ID_DISTANCE_SENSOR: (1/3, send_distance_sensor),
-    mavlink.MAVLINK_MSG_ID_EKF_STATUS_REPORT: (1/3, send_ekf_status_report),
-    mavlink.MAVLINK_MSG_ID_FENCE_STATUS: (1/2, send_fence_status),
-    mavlink.MAVLINK_MSG_ID_GIMBAL_DEVICE_ATTITUDE_STATUS: (1/16, send_gimbal_device_attitude_status),
-    mavlink.MAVLINK_MSG_ID_GLOBAL_POSITION_INT: (1/3, send_global_position_int),
-    mavlink.MAVLINK_MSG_ID_GPS_RAW_INT: (1/2, send_gps_raw_int),
-    mavlink.MAVLINK_MSG_ID_HEARTBEAT: (1/1, send_heartbeat),
-    mavlink.MAVLINK_MSG_ID_MAG_CAL_PROGRESS: (1/3, send_mag_cal_progress),
-    mavlink.MAVLINK_MSG_ID_MAG_CAL_REPORT: (1/3, send_mag_cal_report),
-    mavlink.MAVLINK_MSG_ID_MEMINFO: (1/2, send_meminfo),
-    mavlink.MAVLINK_MSG_ID_NAV_CONTROLLER_OUTPUT: (1/2, send_nav_controller_output),
-    mavlink.MAVLINK_MSG_ID_PARAM_VALUE: (1/2, send_param_value),
-    mavlink.MAVLINK_MSG_ID_POWER_STATUS: (1/2, send_power_status),
-    mavlink.MAVLINK_MSG_ID_RANGEFINDER: (1/3, send_rangefinder),
-    mavlink.MAVLINK_MSG_ID_RAW_IMU: (1/2, send_raw_imu),
-    mavlink.MAVLINK_MSG_ID_RC_CHANNELS_RAW: (1/2, send_rc_channels_raw),
-    mavlink.MAVLINK_MSG_ID_RC_CHANNELS: (1/2, send_rc_channels),
-    mavlink.MAVLINK_MSG_ID_SCALED_IMU2: (1/2, send_scaled_imu2),
-    mavlink.MAVLINK_MSG_ID_SCALED_IMU3: (1/2, send_scaled_imu3),
-    mavlink.MAVLINK_MSG_ID_SCALED_PRESSURE: (1/2, send_scaled_pressure),
-    mavlink.MAVLINK_MSG_ID_SCALED_PRESSURE2: (1/2, send_scaled_pressure2),
-    mavlink.MAVLINK_MSG_ID_SCALED_PRESSURE3: (1/2, send_scaled_pressure3),
-    mavlink.MAVLINK_MSG_ID_SERVO_OUTPUT_RAW: (1/2, send_servo_output_raw),
-    mavlink.MAVLINK_MSG_ID_SYS_STATUS: (1/2, send_sys_status),
-    mavlink.MAVLINK_MSG_ID_SYSTEM_TIME: (1/3, send_system_time),
-    mavlink.MAVLINK_MSG_ID_VFR_HUD: (1/16, send_vfr_hud),
-    mavlink.MAVLINK_MSG_ID_VIBRATION: (1/3, send_vibration),
-    mavlink.MAVLINK_MSG_ID_NAMED_VALUE_FLOAT:(1/12,send_named_value_float)
+    mavlink.MAVLINK_MSG_ID_AHRS: (1 / 16, send_ahrs),
+    mavlink.MAVLINK_MSG_ID_AHRS2: (1 / 16, send_ahrs2),
+    mavlink.MAVLINK_MSG_ID_ATTITUDE: (1 / 16, send_attitude),
+    mavlink.MAVLINK_MSG_ID_BATTERY_STATUS: (1 / 3, send_battery_status),
+    mavlink.MAVLINK_MSG_ID_DISTANCE_SENSOR: (1 / 3, send_distance_sensor),
+    mavlink.MAVLINK_MSG_ID_EKF_STATUS_REPORT: (1 / 3, send_ekf_status_report),
+    mavlink.MAVLINK_MSG_ID_FENCE_STATUS: (1 / 2, send_fence_status),
+    mavlink.MAVLINK_MSG_ID_GIMBAL_DEVICE_ATTITUDE_STATUS: (1 / 16, send_gimbal_device_attitude_status),
+    mavlink.MAVLINK_MSG_ID_GLOBAL_POSITION_INT: (1 / 3, send_global_position_int),
+    mavlink.MAVLINK_MSG_ID_GPS_RAW_INT: (1 / 2, send_gps_raw_int),
+    mavlink.MAVLINK_MSG_ID_HEARTBEAT: (1 / 1, send_heartbeat),
+    mavlink.MAVLINK_MSG_ID_MAG_CAL_PROGRESS: (1 / 3, send_mag_cal_progress),
+    mavlink.MAVLINK_MSG_ID_MAG_CAL_REPORT: (1 / 3, send_mag_cal_report),
+    mavlink.MAVLINK_MSG_ID_MEMINFO: (1 / 2, send_meminfo),
+    mavlink.MAVLINK_MSG_ID_NAV_CONTROLLER_OUTPUT: (1 / 2, send_nav_controller_output),
+    mavlink.MAVLINK_MSG_ID_PARAM_VALUE: (1 / 2, send_param_value),
+    mavlink.MAVLINK_MSG_ID_POWER_STATUS: (1 / 2, send_power_status),
+    mavlink.MAVLINK_MSG_ID_RANGEFINDER: (1 / 3, send_rangefinder),
+    mavlink.MAVLINK_MSG_ID_RAW_IMU: (1 / 2, send_raw_imu),
+    mavlink.MAVLINK_MSG_ID_RC_CHANNELS_RAW: (1 / 2, send_rc_channels_raw),
+    mavlink.MAVLINK_MSG_ID_RC_CHANNELS: (1 / 2, send_rc_channels),
+    mavlink.MAVLINK_MSG_ID_SCALED_IMU2: (1 / 2, send_scaled_imu2),
+    mavlink.MAVLINK_MSG_ID_SCALED_IMU3: (1 / 2, send_scaled_imu3),
+    mavlink.MAVLINK_MSG_ID_SCALED_PRESSURE: (1 / 2, send_scaled_pressure),
+    mavlink.MAVLINK_MSG_ID_SCALED_PRESSURE2: (1 / 2, send_scaled_pressure2),
+    mavlink.MAVLINK_MSG_ID_SCALED_PRESSURE3: (1 / 2, send_scaled_pressure3),
+    mavlink.MAVLINK_MSG_ID_SERVO_OUTPUT_RAW: (1 / 2, send_servo_output_raw),
+    mavlink.MAVLINK_MSG_ID_SYS_STATUS: (1 / 2, send_sys_status),
+    mavlink.MAVLINK_MSG_ID_SYSTEM_TIME: (1 / 3, send_system_time),
+    mavlink.MAVLINK_MSG_ID_VFR_HUD: (1 / 16, send_vfr_hud),
+    mavlink.MAVLINK_MSG_ID_VIBRATION: (1 / 3, send_vibration),
+    mavlink.MAVLINK_MSG_ID_NAMED_VALUE_FLOAT: (1 / 12, send_named_value_float)
 }
