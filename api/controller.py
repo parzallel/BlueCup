@@ -206,12 +206,12 @@ class Controller:
         else:
             full_speed_offset = 125
             if self.y > 0:
-                return thruster_speed_formatter(m1=x_power - (pivot_power + full_speed_offset), m2=z_power,
+                return thruster_speed_formatter(m1=x_power - pivot_power , m2=z_power,
                                                 m3=x_power, m4=m4,
                                                 m5=z_power, m6=m6)
             elif self.y < 0:
                 return thruster_speed_formatter(m1=x_power, m2=z_power,
-                                                m3=x_power + (pivot_power - full_speed_offset), m4=m4,
+                                                m3=x_power + pivot_power, m4=m4,
                                                 m5=z_power, m6=m6)
 
         return ""

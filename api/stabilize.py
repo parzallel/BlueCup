@@ -1,11 +1,14 @@
 
 class Stabilize:
 
-    def __init__(self, mpu, saved_yaw):
+    def __init__(self, mpu, saved_yaw , saved_depth , depth):
         self.mpu = mpu
         self.saved_yaw = saved_yaw
+        self.saved_depth = saved_depth
+        self.depth = depth
         self.pitch_error = 6
         self.yaw_error = 8
+        self.depth_error = 0.2 #meter
 
     def make_stable(self):
         return self.get_tilt_direction() + self.get_turn_direction()
@@ -49,4 +52,14 @@ class Stabilize:
             truster_power = self.mpu.get_yaw_power(diff)
             print("WARNING : Turning the Penguin to right")
             return f"m1={(-1 * truster_power) + 1500}"
+        return ""
+    def get_depth_power(self):
+        if self.saved_depth is None :
+            return ""
+        target = self.depth - self.saved_depth
+        if target > self.depth_error :
+            return f"m2=1300 m5=1700"
+        elif target < self.depth_error :
+            return "m2=1700 m5=1300"
+
         return ""

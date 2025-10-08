@@ -2,8 +2,7 @@ import threading
 import log
 import serial
 import time
-import asyncio
-from . import sensors, stabilize
+from . import sensors, stabilize , pressure
 
 # Serial configuration
 PORT = "COM11"
@@ -18,6 +17,7 @@ lock = threading.Lock()
 latest_data = None
 data_from_sensors = None 
 voltage = 0
+depth = 0
 # Initialize serial connection
 try:
     ser = serial.Serial(port=PORT, baudrate=BAUD, timeout=1)
@@ -74,7 +74,11 @@ def save_yaw():
     except (IndexError, TypeError):
         logger.warning("Yaw not available yet (sensors warming up).")
         return None
-
+def save_depth():
+    try:
+        return pressure.depth
+    except Exception :
+        return None
 
 def  sensor_handler(saved_yaw_int):
     """Format sensor data and stabilize robot."""
@@ -84,7 +88,7 @@ def  sensor_handler(saved_yaw_int):
         formatted_data = sensors.SensorFormatter(data_from_sensors)
         mpu = sensors.MPU(formatted_data.mpu_formatter())
         voltage = formatted_data.voltage
-        return stabilize.Stabilize(mpu, saved_yaw=saved_yaw_int).make_stable()
+        return stabilize.Stabilize(mpu, saved_yaw=saved_yaw_int , saved_depth=save_depth , depth=pressure.depth).make_stable()
     except Exception as e:
         logger.error(f"Error receiving data from MPU: {e}")
         return None

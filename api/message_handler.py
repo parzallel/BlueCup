@@ -72,6 +72,8 @@ def process_manual(msg, command):
     return command.in_action()  # placeholder
 
 
+
+
 async def manual_control_handler(msg: mavlink.MAVLink_manual_control_message):
     """Handle manual control messages from MAVLink."""
     global command
