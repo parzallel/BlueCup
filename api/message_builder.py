@@ -246,11 +246,11 @@ async def send_ekf_status_report():
 
 from . import gps
 
-gps.run_gps_tracker()
+#gps.run_gps_tracker()
 
 
 async def send_global_position_int():
-    print(gps.lat , gps.lon)
+
     await client.mav.global_position_int_send(
         time_boot_ms=client.boot_time_ms(),
         lat=int(gps.lat * 1e7),
